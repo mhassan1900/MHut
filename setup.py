@@ -13,6 +13,6 @@ setup(name='MHutils',   # best to have same names as main source file
       version='1.0.0',
       description='Various utilities that show up often',
       package_dir = {'': 'src'},     
-      py_modules=['MTable', 'msgutils', 'testutils']    
+      py_modules=['MTable', 'msgutils', 'testutils', 'datautils']    
 )
 
