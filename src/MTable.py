@@ -7,35 +7,12 @@ querying mechanism"""
 
 import sqlite3
 import numpy as np
-
+from datautils import columnize
 
 
 #TODO. 
 # Currently supports only named headers, plan to make completely generic
 # Doesn not support deletion, insertion, etc, so good for one time use only 
-
-def columnize(tbl, strip_header=True):   
-    """Wrapper for converting a table in list of row (vector) format into list of column 
-    (vector) format by slicing it. M rows of N-elem list/tuple would return N-rows of M-elem
-    lists eg:  100 rows x (1x3) tuples => 3 rows of (100x1) vectors. So:
-        
-    [['Strike', 'Bid',  'Ask',    [np.array(73.0, 73.5, 74.0),
-     [73.0 ,  2.65, 2.70,      =>  np.array(2.65, 2.47, 2.30), 
-     [73.5 ,  2.47, 2.52,          np.array(2.70, 2.52, 2.36)]
-     [74.0 ,  2.52, 2.36]]         
-     NOTE the conversion of floats to strs in the transposed format is not kept by
-     default IF the header is included ie, strip_header=False. Some massaging needed then. 
-     """
-
-    #for i in range(len(tbl[1:])):
-    #    for j in range(len(tbl[i])):
-    #        if tbl[i][j] == 'N/A': tbl[i][j] = np.NaN 
-
-    if strip_header: amat = np.matrix( tbl[1:] )    # MUST be a consistent 2-D table
-    else: amat = np.matrix( tbl )    
-    clist = amat.transpose().tolist()
-    return [np.array(c) for c in clist] 
-
 
 
 
