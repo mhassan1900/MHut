@@ -25,7 +25,7 @@ def wmsg(*msg):
         print
 
 def dmsg(*msg):
-    """Warning message.""" 
+    """Debug message.""" 
     if len(msg) == 0: print "DEBUG!=> [Default notifier]"
     else:
         print "DEBUG:=>", 

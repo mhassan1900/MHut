@@ -13,7 +13,7 @@ import sqlite3
 def twrap(func):
     """Decorator for test functions to print out what test is being run"""
     def inner(*args):
-        print "-- Running test: <{}> --\n".format(func.__name__) 
+        print "\n-- RUNNING TEST: <{}> --\n".format(func.__name__) 
         return func(*args)
     return inner
 
@@ -102,12 +102,19 @@ def print_breakdown(slist):
 
 # ------------------------------------------------------------ #
 def print_summary(summary, title=None):
+    print 
+    if summary == {}:
+        print "   WARNING. No tests available for {}".format(title)
+        print "-" * 60
+        return
+
     if title==None:
         title = "SUMMARY FOR '%s'" % (summary['Name'])
-    print 
+
     print "*%s*" % (title) 
     print "-" * 60
-   
+  
+
     if summary.has_key('Sublist'):
         print_breakdown(summary['Sublist'])
 
