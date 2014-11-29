@@ -7,8 +7,8 @@ import unittest as ut
 import sys, os
 from os.path import abspath, dirname
 
-cdir = dirname(abspath(sys.argv[0]))        # testdir 
-pdir = dirname(cdir)                        # 
+cdir = dirname(abspath(__file__))   # sys.argv[0])) = # testdir 
+pdir = dirname(cdir)                # 
 srcdir = os.path.join(pdir, 'src')
 sys.path.insert(0, srcdir)
 
@@ -21,7 +21,7 @@ from testutils import run_tests, twrap
 # -- Standard boilerplate header - end 
 import pandas as pd
 import numpy as np
-from datautils import filter_column, columnize 
+from datautils import * 
 
 
 class TestDatautils(ut.TestCase):
@@ -43,6 +43,7 @@ class TestDatautils(ut.TestCase):
     def tearDown(self):
         pass
 
+    ## --------------------------------------------------------------------- ##
     @twrap
     def test_filter_column(self):
         df  = pd.DataFrame(100*np.random.rand(12).reshape(4,3), columns=list('ABC'))
@@ -73,6 +74,7 @@ class TestDatautils(ut.TestCase):
         self.assertTrue(len(filter_column(df1, '1'))==0)  # ERROR (returns empty table)
 
 
+    ## --------------------------------------------------------------------- ##
     @twrap
     def test_columnize(self):
         tbl = [['Strike', 'Bid',  'Ask'],
@@ -93,8 +95,137 @@ class TestDatautils(ut.TestCase):
         # self.assertEqual(xpct, result) 
 
 
+
+    ## --------------------------------------------------------------------- ##
+    @twrap
+    def test_R2(self):
+        self.assertEqual(4.00,  R2(4))
+        self.assertEqual(4.50,  R2(4.5))
+        self.assertEqual(4.58,  R2(4.58))
+        self.assertEqual(4.59,  R2(4.586))
+        self.assertEqual(4.58,  R2(4.584))
+
+    ## --------------------------------------------------------------------- ##
+    @twrap
+    def test_R3(self):
+        self.assertEqual(4.000,  R3(4))
+        self.assertEqual(4.500,  R3(4.5))
+        self.assertEqual(4.585,  R3(4.585))
+        self.assertEqual(4.586,  R3(4.5863))
+        self.assertEqual(4.587,  R3(4.5867))
+
+    ## --------------------------------------------------------------------- ##
+    @twrap
+    def test_RN(self):
+        self.assertEqual(4.00,     RN(4))
+        self.assertEqual(4.57,     RN(4.5736))
+        self.assertEqual(4.527,    RN(4.5268, 3))
+        self.assertEqual(4.57360,  RN(4.5736, 5))
+        self.assertEqual('abc',    RN('abc', 4))
+
+    ## --------------------------------------------------------------------- ##
+    @twrap
+    def test_roundoff_list(self):
+        alist = [ 2.5768, 'bee', 256]
+        roundoff_list(alist, 3) 
+        self.assertEqual([2.577, 'bee', 256.000], alist)
+
+        alist = [ 2.5768, 'bee2', 256]
+        roundoff_list(alist) 
+        self.assertEqual([2.58, 'bee2', 256.00], alist)
+
+
+    ## --------------------------------------------------------------------- ##
+    @twrap
+    def test_roundoff_dict(self):
+        adict = {'A': 2.576, 'B': 'bee', 'C': 256, 'D': [32.1475, 32, 'fee']}
+        roundoff_dict(adict, 3)
+        axpct = {'A': 2.576, 'B': 'bee', 'C': 256.000, 'D': [32.148, 32.000, 'fee']}
+        self.assertEqual(axpct, adict)
+
+        adict = {'A': 2.576, 'B': 'bee', 'C': 256, 'D': [32.1475, 32, 'fee']}
+        roundoff_dict(adict, 2)
+        axpct = {'A': 2.58, 'B': 'bee', 'C': 256.00, 'D': [32.15, 32.00, 'fee']}
+        self.assertEqual(axpct, adict)
+
+
+    ## --------------------------------------------------------------------- ##
+    @twrap
+    def test_isnumeric(self):
+        self.assertTrue(isnumeric(23))
+        self.assertTrue(isnumeric(23.57))
+        self.assertTrue(isnumeric('.57'))
+        self.assertTrue(isnumeric('257'))
+        self.assertFalse(isnumeric('257.a'))
+        self.assertFalse(isnumeric('a.bc'))
+        self.assertFalse(isnumeric('a.25bc'))
+        self.assertFalse(isnumeric('1.25.37'))
+
+
+    ## --------------------------------------------------------------------- ##
+    @twrap
+    def test_reorder_list(self):
+        orig_list = ['apple', 'banana', 'cantaloupe', 'guava', 'mango']
+        des_order = ['banana', 'guava']
+
+        new_list = reorder_list(orig_list, des_order) # , 'any'
+        b_ix = new_list.index('banana')
+        g_ix = new_list.index('guava')
+        self.assertEqual(1, g_ix-b_ix)
+        self.assertEqual(set(orig_list), set(new_list))
+        self.assertNotEqual(orig_list, new_list)
+
+        new_list = reorder_list(orig_list, des_order, 'begin')
+        self.assertEqual(new_list, 'banana guava apple cantaloupe mango'.split())
+
+        new_list = reorder_list(orig_list, des_order, 'end')
+        self.assertEqual(new_list, 'apple cantaloupe mango banana guava'.split())
+
+        # TODO. FIXME. This is a bug w/'before' qualifier, mango should not come 
+        #before 'guava'
+        new_list = reorder_list(orig_list, des_order, 'before')
+        print 'NEW  LIST:', new_list 
+        print 'XPCT LIST:', 'apple cantaloupe banana guava mango'.split()
+        self.assertEqual(new_list, 'apple cantaloupe banana guava mango'.split())
+
+        new_list = reorder_list(orig_list, des_order, 'after')
+        self.assertEqual(new_list, 'apple banana guava cantaloupe mango'.split())
+
+        new_list = reorder_list(orig_list, 'mango cranberry cantaloupe'.split())
+        m_ix = new_list.index('mango')
+        c_ix = new_list.index('cantaloupe')
+        self.assertEqual(1, c_ix-m_ix)
+        self.assertEqual(set(orig_list), set(new_list))
+
+        des_order = 'banana apple cantaloupe something_else mango guava'.split() 
+        new_list = reorder_list(orig_list, des_order) 
+        self.assertEqual(new_list, des_order) 
+
+    ## --------------------------------------------------------------------- ##
+    @twrap
+    def test_df_reorder_columns(self):
+        A,B,C,D,E = 0,1,2,3,4
+        m = np.random.rand(30).reshape(6,5)
+        df = pd.DataFrame( m, columns=list('ABCDE') )   
+
+        df1 = df_reorder_columns(df, orderlist=list('CDAEB')) 
+        m_xpdf = np.array(zip(m[:,C],m[:,D],m[:,A],m[:,E],m[:,B]))
+        xpdf1 = pd.DataFrame( m_xpdf, columns=list('CDAEB') )
+
+        df2 = df_reorder_columns(df, list('BD'),'begin') 
+        m_xpdf2 = np.array(zip(m[:,B],m[:,D],m[:,A],m[:,C],m[:,E]))
+        xpdf2 = pd.DataFrame( m_xpdf2, columns=list('BDACE') )
+
+        df3 = df_reorder_columns(df, list('CFA'),'end') 
+        m_xpdf3 = np.array(zip(m[:,B],m[:,D],m[:,E],m[:,C],m[:,A]))
+        xpdf3 = pd.DataFrame( m_xpdf3, columns=list('BDECA') )
+
+        self.assertTrue(df1.equals(xpdf1))
+        self.assertTrue(df2.equals(xpdf2))
+        self.assertTrue(df3.equals(xpdf3))
+
 if __name__ == '__main__':
     # ut.main()
-    run_tests(TestMTable)
+    run_tests(TestDatautils)
 
 

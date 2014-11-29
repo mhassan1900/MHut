@@ -16,6 +16,45 @@ logger = logging.getLogger(__name__)
 
 
 
+## ------------------------------------------------------------------- ##
+def R2(num):
+    """Simple round off to 2 dec places wrapper"""
+    return round(num, 2)
+
+## ------------------------------------------------------------------- ##
+def R3(num):
+    """Simple round off to 3 dec places wrapper"""
+    return round(num, 3)
+
+## ------------------------------------------------------------------- ##
+def RN(num, places=2):
+    """Simple round off to 2 dec places by default wrapper. Fails silently 
+    on non floats"""
+    try: f = round(num, places)
+    except: f = num
+    return f 
+
+## ------------------------------------------------------------------- ##
+def roundoff_list(alist, places=2):
+    """Rounds off contents in a list to '2' places by default.  Fails 
+    silently on non floats.  NOTE. list is modified INPLACE"""
+    for i, v  in enumerate(alist): 
+        alist[i] = RN(v, places) 
+    return  
+
+## ------------------------------------------------------------------- ##
+def roundoff_dict(adict, places=2):
+    """Rounds off contents in a dictionary table to '2' places by default.
+    Can handle one level deep of list of nums. Fails silently on non floats.
+    NOTE. Dictionary is modified INPLACE"""
+    for k,v  in adict.items(): 
+        if type(v) == list: roundoff_list(v, places)
+        else: adict[k] = RN(v, places)
+            # v = [round(f, places) for f in v]
+        #try: adict[k] = round(v, places)
+        #except: continue # silenty move on 
+    return  
+
 
 ## ------------------------------------------------------------------- ##
 def isnumeric(a):
