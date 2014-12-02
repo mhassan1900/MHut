@@ -1,0 +1,10 @@
+
+#<pr:sep>  |     |           |
+Name        A Cat A Dog       Neither   
+my r2         1        0        0    
+my d2         1        0        0
+
+other piper     0           4        0
+solomon       0        0        2   
+
+
