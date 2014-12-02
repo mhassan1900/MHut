@@ -221,6 +221,92 @@ def columnize(tbl, strip_header=True):
     return [np.array(c) for c in clist] 
 
 
+## ------------------------------------------------------------------- ##
+
+
+
+def parse2df(fname):
+    '''Returns & generates a DataFrame from a file that has free from
+    spacing BUT has the header position specified with "|". Currently not
+    changeable but may be modified in the future. Helps deal with non-CSV
+    format but that has maligned tabs and spaces. '''
+
+    # NOTE. This is currently done in two passes to make use of exisiting 
+    # function txt2df & is a little slow, but ok for small files to parse
+
+    try:
+        fin = open (fname)
+    except:
+        print "Could not open {} for reading!".format(fname)
+
+    txtlist = fin.readlines()    # slurp whole thing
+    fin.close()
+  
+    sep_pragma = '#<pr:sep>'
+    txtlist = [t.replace(sep_pragma,' '*len(sep_pragma)) if t.lstrip().startswith(sep_pragma) else t 
+                for t in txtlist]
+    df = txt2df(''.join(txtlist), header_sep='|', header=True, skip_comment=True, index='default')
+    return df
+
+
+
+
+## ------------------------------------------------------------------- ##
+
+def txt2df(strtxt, header_sep='|', header=True, skip_comment=True, index='default'):
+    '''Returns & generates a DataFrame from a string that has free form
+    spacing BUT has the header position specified with "|". Currently not
+    changeable but may be modified in the future. Helps deal with non-CSV
+    format but that has maligned tabs and spaces. 
+        strtxt:       blob of text that needs to be parsed 
+        header:       [True|False] - has a header or not 
+        header_sep:   character marking positions of string separation  
+        skip_comment: [True|False] - determine if comments are to be skipped
+                      over. Empty lines are always ignored. 
+                      currently only '#' is treated as comment 
+        index:        use 'default', None, or any other valid column 
+    '''
+
+    positions = []
+    lol = []
+
+    sep_found = False 
+
+    for line in strtxt.split('\n'):
+        if len(line.strip()) == 0:  # skip blank
+            continue
+        elif not sep_found and line.lstrip().startswith(header_sep): 
+            positions = [i for (i, c) in enumerate(line) if c == header_sep]
+            continue
+        elif (line.lstrip()).startswith('#'):   # skip comment 
+            continue
+
+        line = line.replace('\t', ' ')
+
+        if len(positions) == 0: # use split by space by default, basically csv type
+            lol.append( line.strip().split() )
+        else:
+            startpos = [0] + positions[:]
+            endpos = positions[:] + [len(line)]
+            # print 'S:', startpos  # DEBUG
+            # print 'E:', endpos 
+            tmp = [line[a:b].strip() for a,b in zip(startpos,endpos)]
+            # print tmp 
+            lol.append(tmp)
+
+
+    index_name = lol[0][0] if index == 'default' else index
+
+    df = pd.DataFrame(lol[1:], columns =lol[0])
+    df = df.convert_objects(convert_numeric=True) 
+
+    if index_name != None:
+        df.set_index(index_name, inplace=True)
+    return df
+
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
+    df = parse2df('test_parse2df.txt')
+    print df
 

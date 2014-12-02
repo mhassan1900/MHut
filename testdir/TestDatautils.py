@@ -6,10 +6,11 @@
 import unittest as ut
 import sys, os
 from os.path import abspath, dirname
+from os.path import join as osjoin
 
 cdir = dirname(abspath(__file__))   # sys.argv[0])) = # testdir 
 pdir = dirname(cdir)                # 
-srcdir = os.path.join(pdir, 'src')
+srcdir = osjoin(pdir, 'src')
 sys.path.insert(0, srcdir)
 
 pathlist = []
@@ -22,6 +23,22 @@ from testutils import run_tests, twrap
 import pandas as pd
 import numpy as np
 from datautils import * 
+
+
+# -- golden dataset -- 
+G_dict = {
+    'Name'        : ['A Cat', 'A Dog', 'Neither'],
+    'my r2'       : [ 1,      0,        0],
+    'my d2'       : [ 1,      0,        0],
+    'other piper' : [ 0,      4,        0],
+    'solomon'     : [ 0,      0,        2]} 
+G_DF = pd.DataFrame.from_dict( G_dict, orient='index')
+G_DF.drop('Name', inplace=True) 
+G_DF.index.name = 'Name'
+G_DF.columns = G_dict['Name']
+G_DF = G_DF.reindex_axis(['my r2', 'my d2', 'other piper', 'solomon'])
+G_DF = G_DF.convert_objects(convert_numeric=True)
+
 
 
 class TestDatautils(ut.TestCase):
@@ -224,8 +241,39 @@ class TestDatautils(ut.TestCase):
         self.assertTrue(df2.equals(xpdf2))
         self.assertTrue(df3.equals(xpdf3))
 
+
+    @twrap
+    def test_txt2df(self):
+
+        alltxt = '''
+                   |      |          |
+        Name        A Cat       A Dog Neither
+        my r2         1        0        0
+        my d2         1        0        0
+
+        other piper     0        4        0
+        solomon       0        0        2
+
+        '''
+        df = txt2df(alltxt)
+        self.assertTrue(G_DF.equals(df))
+
+
+
+
+    @twrap
+    def test_parse2df(self):
+        df = parse2df(osjoin(cdir, 'test_parse2df.txt'))
+        self.assertTrue(G_DF.equals(df))
+
+
+
+
+
 if __name__ == '__main__':
     # ut.main()
     run_tests(TestDatautils)
+
+
 
 
