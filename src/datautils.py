@@ -215,10 +215,19 @@ def columnize(tbl, strip_header=True):
     #    for j in range(len(tbl[i])):
     #        if tbl[i][j] == 'N/A': tbl[i][j] = np.NaN 
 
+    if len(tbl)==0 or (len(tbl)==1 and strip_header): 
+        logger.error('Empty table entered. No action taken') 
+        return []
+
     if strip_header: amat = np.matrix( tbl[1:] )    # MUST be a consistent 2-D table
     else: amat = np.matrix( tbl )    
+
+    # n=inject to preserve native data types - except int->float
+    row_types = [type(a) for a in tbl[1]]
+    row_types = [float if a==int else a for a in row_types] 
+     
     clist = amat.transpose().tolist()
-    return [np.array(c) for c in clist] 
+    return [np.array(c, dtype=ntype) for c,ntype in zip(clist,row_types)] 
 
 
 ## ------------------------------------------------------------------- ##
