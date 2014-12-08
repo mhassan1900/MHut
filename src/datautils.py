@@ -8,6 +8,7 @@ import re
 import pandas as pd
 import numpy as np 
 import logging 
+import datetime as dt
 
 
 _ANYOP_ = re.compile(r'[><=&|]')
@@ -60,10 +61,11 @@ def roundoff_dict(adict, places=2):
 def isnumeric(a):
     """Returns True if 'a' is an int, float, or a string that could be converted
     to an int or float"""
-    if type(a) in (int, float): return True
+    if type(a) == int or type(b) == float: return True
     elif type(a) == str:
         if a.replace('.','').isdigit() and a.count('.') < 2: 
             return True
+    elif np.dtype(a) == int or np.dtype(b) == float: return True
     return False
 
 
