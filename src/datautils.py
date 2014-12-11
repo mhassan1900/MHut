@@ -61,11 +61,11 @@ def roundoff_dict(adict, places=2):
 def isnumeric(a):
     """Returns True if 'a' is an int, float, or a string that could be converted
     to an int or float"""
-    if type(a) == int or type(b) == float: return True
+    if type(a) == int or type(a) == float: return True
     elif type(a) == str:
         if a.replace('.','').isdigit() and a.count('.') < 2: 
             return True
-    elif np.dtype(a) == int or np.dtype(b) == float: return True
+    elif np.dtype(a) == int or np.dtype(a) == float: return True
     return False
 
 
@@ -314,6 +314,44 @@ def txt2df(strtxt, header_sep='|', header=True, skip_comment=True, index='defaul
     if index_name != None:
         df.set_index(index_name, inplace=True)
     return df
+
+
+def broadcast(alist, n, axis=1):
+    """Broadcasts a list like object along columns (axis=1) or along rows (axis=0)
+        alist: list like object, pandas pandas.Series, or numpy.array 
+        n    :    int - number of times to replicate
+        axis : 0|1   - 0: work down rows, 1: work along columns
+    Works better with numpy.ndarray & pd.Series objects.
+    NOTE. if list has non-homogenous types, typecasting will be performed as per numpy rules
+
+    Eg: broadcast([1 2 3 4], 3, axis=0) ->  [[1, 2, 3, 4],[1, 2, 3, 4],[1, 2, 3, 4]]  - 3x4
+        broadcast([1 2 3 4], 3, axis=1) ->  [[1, 1, 1],[2, 2, 2],[3, 3, 3],[4, 4, 4]]  - 4x3
+
+    A list|narray|matrix type returns the same type back but a Series returns a DataFrame 
+    """
+ 
+    aa = ma = sa = alist    # just for convenience 
+
+    if type(alist)==list:
+        if axis==0:     return [alist]*n # easy
+        else:           return (np.array([alist]).T*np.ones(n)).tolist()
+
+    elif type(aa)==np.ndarray:
+        if axis==0:     return np.array( np.mat(np.ones(n)).T*aa )
+        else:           return np.array([aa]).T*np.ones(n) 
+
+    elif type(ma)==np.matrix:
+        if axis==0:     return np.mat(np.ones(n)).T*alist
+        else:           return alist.T*np.ones(n)
+
+    elif type(sa)==pd.Series:
+        if axis==0:     return pd.DataFrame( np.mat(np.ones(n)).T*np.mat(sa) )
+        else:           return pd.DataFrame( np.mat(aa).T*np.ones(n) )
+
+    else:
+        print 'Unrecognized list like object', type(alist) , 'entered' 
+        return None
+
 
 
 if __name__ == '__main__':

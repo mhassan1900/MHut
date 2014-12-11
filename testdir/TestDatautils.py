@@ -267,6 +267,48 @@ class TestDatautils(ut.TestCase):
         self.assertTrue(G_DF.equals(df))
 
 
+    @twrap
+    def test_broadcast(self):
+        alist = [1,2,3,4]
+        aa = np.array(alist)
+        ma = np.matrix(alist)
+        sa = pd.Series(alist) 
+
+        # -- check lists --
+        x = broadcast(alist, 3, 0) 
+        y = broadcast(alist, 3) 
+
+        xpct_x = [alist, alist, alist]
+        xpct_y = [[1,1,1], [2,2,2], [3,3,3], [4,4,4]] 
+        self.assertEqual( xpct_x, x)
+        self.assertEqual( xpct_y, y)
+
+        # -- check arrays  --
+        x = broadcast(aa, 3, 0) 
+        y = broadcast(aa, 3) 
+
+        xpct_x = np.array( [alist, alist, alist] )
+        xpct_y = np.array( [[1,1,1], [2,2,2], [3,3,3], [4,4,4]] )
+        self.assertEqual( (xpct_x-x).sum(), 0)
+        self.assertEqual( (xpct_y-y).sum(), 0)
+
+        # -- check matrices  --
+        x = broadcast(ma, 3, 0) 
+        y = broadcast(ma, 3) 
+
+        xpct_x = np.matrix( [alist, alist, alist] )
+        xpct_y = np.matrix( [[1,1,1], [2,2,2], [3,3,3], [4,4,4]] )
+        self.assertEqual( (xpct_x-x).sum(), 0)
+        self.assertEqual( (xpct_y-y).sum(), 0)
+
+        # -- check series  --
+        x = broadcast(sa, 3, 0) 
+        y = broadcast(sa, 3) 
+
+        xpct_x = pd.DataFrame( [alist, alist, alist], dtype=float )
+        xpct_y = pd.DataFrame( [[1,1,1], [2,2,2], [3,3,3], [4,4,4]], dtype=float )
+        self.assertTrue( xpct_x.equals(x) )
+        self.assertTrue( xpct_y.equals(y) )
 
 
 
