@@ -114,31 +114,41 @@ def reorder_list(origlist, orderlist, qualifier='any'):
     
     if len(origlist) < 2: return origlist 
     if len(orderlist) < 2: return  origlist
-    keylist = origlist[:]
+    keylist = origlist[:]       # need copy to avoid messing up input 
+    deslist = orderlist[:]      # need copy to avoid messing up input 
 
     keyset = set(keylist)
-    orderset = set(orderlist)
+    orderset = set(deslist)
     if not orderset.issubset(keyset): 
         logger.warn( "Specified order is mismatched. Bad fields will be ignored")
         for k in orderset: 
-            if k not in keyset: orderlist.remove(k)
+            if k not in keyset: deslist.remove(k)
+    
+    if qualifier in ('any'): 
+        idx = keylist.index(deslist[0])
+        for k in deslist: keylist.remove(k)
+        keylist = keylist[:idx] + deslist + keylist[idx:]
 
-    
-    if qualifier in ('any', 'after'):   # currently the same
-        idx = keylist.index(orderlist[0])
-        for k in orderlist: keylist.remove(k)
-        keylist = keylist[:idx] + orderlist + keylist[idx:]
+    if qualifier in ('after'): 
+        idx = keylist.index(deslist[0])
+        firstleg, lastleg = keylist[:idx], keylist[idx+1:] 
+        for k in deslist[1:]: lastleg.remove(k)
+        keylist = firstleg + deslist + lastleg 
+
     if qualifier == 'before':
-        idx = keylist.index(orderlist[-1])
-        for k in orderlist: keylist.remove(k)
-        keylist = keylist [:idx] + orderlist + keylist[idx:]
+        idx = keylist.index(deslist[-1])
+        firstleg, lastleg = keylist[:idx], keylist[idx+1:] 
+        for k in deslist[:-1]: firstleg.remove(k)
+        keylist = firstleg + deslist + lastleg 
+
     if qualifier == 'begin':
-        for k in orderlist: keylist.remove(k)
-        keylist = orderlist + keylist 
+        for k in deslist: keylist.remove(k)
+        keylist = deslist + keylist 
+
     if qualifier == 'end':
-        for k in orderlist: keylist.remove(k)
-        keylist = keylist + orderlist 
-    
+        for k in deslist: keylist.remove(k)
+        keylist = keylist + deslist 
+   
     return keylist
 
 

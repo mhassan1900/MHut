@@ -198,11 +198,7 @@ class TestDatautils(ut.TestCase):
         new_list = reorder_list(orig_list, des_order, 'end')
         self.assertEqual(new_list, 'apple cantaloupe mango banana guava'.split())
 
-        # TODO. FIXME. This is a bug w/'before' qualifier, mango should not come 
-        #before 'guava'
         new_list = reorder_list(orig_list, des_order, 'before')
-        print 'NEW  LIST:', new_list 
-        print 'XPCT LIST:', 'apple cantaloupe banana guava mango'.split()
         self.assertEqual(new_list, 'apple cantaloupe banana guava mango'.split())
 
         new_list = reorder_list(orig_list, des_order, 'after')
@@ -216,7 +212,7 @@ class TestDatautils(ut.TestCase):
 
         des_order = 'banana apple cantaloupe something_else mango guava'.split() 
         new_list = reorder_list(orig_list, des_order) 
-        self.assertEqual(new_list, des_order) 
+        self.assertEqual(new_list, ['banana', 'apple', 'cantaloupe', 'mango', 'guava'])
 
     ## --------------------------------------------------------------------- ##
     @twrap
