@@ -312,6 +312,7 @@ def txt2df(strtxt, header_sep='|', header=True, skip_comment=True, index='defaul
             # print 'S:', startpos  # DEBUG
             # print 'E:', endpos 
             tmp = [line[a:b].strip() for a,b in zip(startpos,endpos)]
+            tmp[1:] = [t.replace('%','') for t in tmp[1:]]      # Remove % symbols from data text
             # print tmp 
             lol.append(tmp)
 
@@ -325,6 +326,8 @@ def txt2df(strtxt, header_sep='|', header=True, skip_comment=True, index='defaul
         df.set_index(index_name, inplace=True)
     return df
 
+
+## ------------------------------------------------------------------- ##
 
 def broadcast(alist, n, axis=1):
     """Broadcasts a list like object along columns (axis=1) or along rows (axis=0)
@@ -361,6 +364,8 @@ def broadcast(alist, n, axis=1):
     else:
         print 'Unrecognized list like object', type(alist) , 'entered' 
         return None
+
+## ------------------------------------------------------------------- ##
 
 
 
