@@ -40,6 +40,35 @@ G_DF = G_DF.reindex_axis(['my r2', 'my d2', 'other piper', 'solomon'])
 G_DF = G_DF.convert_objects(convert_numeric=True)
 
 
+G1_dict = {    # I      II        III       IV        V 
+    'a': [2.071527, 1.998107, 2.029159, 1.192129, 1.459613],
+    'b': [1.465882, 1.242207, 2.122667, 1.587954, 1.842492],
+    'c': [1.505012, 1.674715, 1.436381, 1.626080, 1.435298],
+    'd': [2.121946, 2.005520, 2.115850, 1.795292, 2.076429]
+}
+G1_DF = pd.DataFrame.from_dict(G1_dict, orient='index')
+G1_DF.columns = 'I II III IV V'.split()
+
+# -- convenience datasets for checking results -- 
+G1_dict_R0 = { 
+    'a': [2.0, 2.0, 2.0, 1.0, 1.0], 'b': [1.0, 1.0, 2.0, 2.0, 2.0],
+    'c': [2.0, 2.0, 1.0, 2.0, 1.0], 'd': [2.0, 2.0, 2.0, 2.0, 2.0]
+}
+G1_DF_R0 = pd.DataFrame.from_dict(G1_dict_R0, orient='index')
+G1_DF_R0.columns = G1_DF.columns 
+
+G1_dict_R2 = { 
+    'a': [2.07, 2.00, 2.03, 1.19, 1.46],
+    'b': [1.47, 1.24, 2.12, 1.59, 1.84],
+    'c': [1.51, 1.67, 1.44, 1.63, 1.44],
+    'd': [2.12, 2.01, 2.12, 1.80, 2.08]
+}
+G1_DF_R2 = pd.DataFrame.from_dict(G1_dict_R2, orient='index')
+G1_DF_R2.columns = G1_DF.columns 
+
+
+
+
 
 class TestDatautils(ut.TestCase):
 
@@ -238,6 +267,7 @@ class TestDatautils(ut.TestCase):
         self.assertTrue(df3.equals(xpdf3))
 
 
+    ## --------------------------------------------------------------------- ##
     @twrap
     def test_txt2df(self):
 
@@ -255,14 +285,14 @@ class TestDatautils(ut.TestCase):
         self.assertTrue(G_DF.equals(df))
 
 
-
-
+    ## --------------------------------------------------------------------- ##
     @twrap
     def test_parse2df(self):
         df = parse2df(osjoin(cdir, 'test_parse2df.txt'))
         self.assertTrue(G_DF.equals(df))
 
 
+    ## --------------------------------------------------------------------- ##
     @twrap
     def test_broadcast(self):
         alist = [1,2,3,4]
@@ -307,11 +337,40 @@ class TestDatautils(ut.TestCase):
         self.assertTrue( xpct_y.equals(y) )
 
 
+    ## --------------------------------------------------------------------- ##
+    @twrap
+    def test_roundoff_df(self):
+
+        df = roundoff_df(G1_DF)
+        self.assertTrue(df.equals(G1_DF_R0))
+
+        df = roundoff_df(G1_DF, 2)
+        self.assertTrue(df.equals(G1_DF_R2))
+
+
+        df = roundoff_df(G1_DF, 2, columns=['III', 'V'])
+        G1_rounded = G1_DF.copy()
+        G1_rounded.reindex_axis( list('abcd') )     # becomes acbd for some reason
+        G1_rounded['III'] =  pd.Series(dict(zip(list('abcd'), [2.03, 2.12, 1.44, 2.12] )))
+        G1_rounded['V']   =  pd.Series(dict(zip(list('abcd'), [1.46, 1.84, 1.44, 2.08] )))
+        self.assertTrue(df.equals(G1_rounded))
+
+
+        df = roundoff_df(G1_DF, 2, indices=['b', 'd'])
+        G1_rounded = G1_DF.copy()
+        G1_rounded.ix['b'] = [1.47, 1.24, 2.12, 1.59, 1.84]
+        G1_rounded.ix['d'] = [2.12, 2.01, 2.12, 1.80, 2.08]
+        self.assertTrue(df.equals(G1_rounded))
+    
+        df = roundoff_df(G1_DF, 2, columns=['III', 'V'], indices=['b', 'd'])
+        G1_rounded = G1_DF.copy()
+        G1_rounded.ix['b', ['III', 'V']] = [2.12, 1.84]
+        G1_rounded.ix['d', ['III', 'V']] = [2.12, 2.08]
+        self.assertTrue(df.equals(G1_rounded))
+        
+
 
 if __name__ == '__main__':
     # ut.main()
     run_tests(TestDatautils)
-
-
-
 

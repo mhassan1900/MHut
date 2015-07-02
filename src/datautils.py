@@ -367,6 +367,36 @@ def broadcast(alist, n, axis=1):
 
 ## ------------------------------------------------------------------- ##
 
+def roundoff_df(df, places=0, columns=None, indices=None):
+    """Round off all entries in DataFrame. If no specific columns or
+    indices are provided all DataFrame elements are rounded. 
+    Returns a DataFrame with rounding applied
+
+    places : number of decimal places to round
+    columns: None or list of columns to apply rounding
+    indices: None or list of indices to apply rounding
+    """
+
+    tmp = df.copy()
+
+    if columns==None and indices==None: # round all
+        for j in tmp.columns: 
+            tmp[j] = tmp[j].round(places)
+    elif columns!=None and indices==None: # round specific columns 
+        for j in columns: 
+            tmp[j] = tmp[j].round(places)
+    elif columns==None and indices!=None: # round specific rows 
+        for i in indices: 
+            tmp.ix[i] = tmp.ix[i].round(places) 
+    else:                                  # specific rows & columns (slow at the moment)
+        for i in indices: 
+            tmp.ix[i, columns] = tmp.ix[i, columns].round(places) 
+
+    return tmp 
+
+
+
+## ------------------------------------------------------------------- ##
 
 
 if __name__ == '__main__':
