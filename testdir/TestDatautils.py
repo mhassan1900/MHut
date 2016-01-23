@@ -282,6 +282,7 @@ class TestDatautils(ut.TestCase):
 
         '''
         df = txt2df(alltxt)
+        for c in df.columns: df[c] = pd.to_numeric(df[c]) 
         self.assertTrue(G_DF.equals(df))
 
 
@@ -289,6 +290,7 @@ class TestDatautils(ut.TestCase):
     @twrap
     def test_parse2df(self):
         df = parse2df(osjoin(cdir, 'test_parse2df.txt'))
+        for c in df.columns: df[c] = pd.to_numeric(df[c]) 
         self.assertTrue(G_DF.equals(df))
 
 

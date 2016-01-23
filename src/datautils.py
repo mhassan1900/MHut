@@ -320,7 +320,7 @@ def txt2df(strtxt, header_sep='|', header=True, skip_comment=True, index='defaul
     index_name = lol[0][0] if index == 'default' else index
 
     df = pd.DataFrame(lol[1:], columns =lol[0])
-    df = df.convert_objects(convert_numeric=True) 
+    # df = df.convert_objects(convert_numeric=True)     # deprecated - rely on auto detection 
 
     if index_name != None:
         df.set_index(index_name, inplace=True)
