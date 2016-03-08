@@ -16,7 +16,7 @@ from datautils import columnize
 
 
 
-class MTable():
+class MHTable():
     def __init__(self, tbl=None, tbltype='list', fields=None, fdtype=None):
         """constructs table for row/col access where,  
             tbl      => a list of rows, where each row is of 

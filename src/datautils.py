@@ -1,9 +1,12 @@
 #!/usr/bin/env python2.7
-
-'''Data structure utils module for generic use. Has functions
-   that would be really nice to add to string, dictionary or 
-   DataFrame types. Could extend some of these to add capability 
 '''
+Data structure utils module for generic use. Has functions
+that would be really nice to add to string, dictionary or 
+DataFrame types. Could extend some of these to add capability.
+
+Some of the functions need some heavy testing and debug. 
+'''
+
 import re
 import pandas as pd
 import numpy as np 
@@ -15,17 +18,14 @@ _ANYOP_ = re.compile(r'[><=&|]')
 logger = logging.getLogger(__name__)
 
 
+## =================================================================== ##
+## ROUNDING FUNCTIONS
+## =================================================================== ##
+# Simple round off to 2 & 3 dec places wrappers
 
+R2 = lambda x: round(x, 2)
 
-## ------------------------------------------------------------------- ##
-def R2(num):
-    """Simple round off to 2 dec places wrapper"""
-    return round(num, 2)
-
-## ------------------------------------------------------------------- ##
-def R3(num):
-    """Simple round off to 3 dec places wrapper"""
-    return round(num, 3)
+R3 = lambda x: round(x, 3)
 
 ## ------------------------------------------------------------------- ##
 def RN(num, places=2):
@@ -51,25 +51,121 @@ def roundoff_dict(adict, places=2):
     for k,v  in adict.items(): 
         if type(v) == list: roundoff_list(v, places)
         else: adict[k] = RN(v, places)
-            # v = [round(f, places) for f in v]
-        #try: adict[k] = round(v, places)
-        #except: continue # silenty move on 
     return  
 
 
 ## ------------------------------------------------------------------- ##
-def isnumeric(a):
-    """Returns True if 'a' is an int, float, or a string that could be converted
-    to an int or float"""
-    if type(a) == int or type(a) == float: return True
-    elif type(a) == str:
-        if a.replace('.','').isdigit() and a.count('.') < 2: 
-            return True
-    elif np.dtype(a) == int or np.dtype(a) == float: return True
-    return False
+def roundoff_df(df, places=0, columns=None, indices=None):
+    """Round off all entries in DataFrame. If no specific columns or
+    indices are provided all DataFrame elements are rounded. 
+    Returns a DataFrame with rounding applied
+
+    places : number of decimal places to round
+    columns: None or list of columns to apply rounding
+    indices: None or list of indices to apply rounding
+    """
+
+    tmp = df.copy()
+
+    if columns==None and indices==None: # round all
+        for j in tmp.columns: 
+            tmp[j] = tmp[j].round(places)
+    elif columns!=None and indices==None: # round specific columns 
+        for j in columns: 
+            tmp[j] = tmp[j].round(places)
+    elif columns==None and indices!=None: # round specific rows 
+        for i in indices: 
+            tmp.ix[i] = tmp.ix[i].round(places) 
+    else:                                  # specific rows & columns (slow at the moment)
+        for i in indices: 
+            tmp.ix[i, columns] = tmp.ix[i, columns].round(places) 
+
+    return tmp 
+
+
+## =================================================================== ##
+## DATAFRAME BUILDING FUNCTIONS
+## =================================================================== ##
+def parse2df(fname):
+    '''Returns & generates a DataFrame from a file that has free from
+    spacing BUT has the header position specified with "|". Currently not
+    changeable but may be modified in the future. Helps deal with non-CSV
+    format but that has maligned tabs and spaces. '''
+
+    # NOTE. This is currently done in two passes to make use of exisiting 
+    # function txt2df & is a little slow, but ok for small files to parse
+
+    try:
+        fin = open (fname)
+    except:
+        print "Could not open {} for reading!".format(fname)
+
+    txtlist = fin.readlines()    # slurp whole thing
+    fin.close()
+  
+    sep_pragma = '#<pr:sep>'
+    txtlist = [t.replace(sep_pragma,' '*len(sep_pragma)) if t.lstrip().startswith(sep_pragma) else t 
+                for t in txtlist]
+    df = txt2df(''.join(txtlist), header_sep='|', header=True, skip_comment=True, index='default')
+    return df
 
 
 ## ------------------------------------------------------------------- ##
+def txt2df(strtxt, header_sep='|', header=True, skip_comment=True, index='default', 
+           strip_pct=True):
+    '''Returns & generates a DataFrame from a string that has free form
+    spacing BUT has the header position specified with "|". Currently not
+    changeable but may be modified in the future. Helps deal with non-CSV
+    format but that has maligned tabs and spaces. 
+        strtxt:       blob of text that needs to be parsed 
+        header:       [True|False] - has a header or not 
+        header_sep:   character marking positions of string separation  
+        skip_comment: [True|False] - determine if comments are to be skipped
+                      over. Empty lines are always ignored. 
+                      currently only '#' is treated as comment 
+        index:        use 'default', None, or any other valid column 
+        strip_pct:    If True, removes '%' characters from txt.
+
+        Returns:      A pd.DataFrame object
+    '''
+
+    positions = []
+    lol = []
+
+    sep_found = False 
+
+    for line in strtxt.split('\n'):
+        if len(line.strip()) == 0:  # skip blank
+            continue
+        elif not sep_found and line.lstrip().startswith(header_sep): 
+            positions = [i for (i, c) in enumerate(line) if c == header_sep]
+            continue
+        elif (line.lstrip()).startswith('#'):   # skip comment 
+            continue
+
+        line = line.replace('\t', ' ')
+
+        if len(positions) == 0: # use split by space by default, basically csv type
+            lol.append( line.strip().split() )
+        else:
+            startpos = [0] + positions[:]
+            endpos = positions[:] + [len(line)]
+            tmp = [line[a:b].strip() for a,b in zip(startpos,endpos)]
+            if strip_pct:
+                tmp[1:] = [t.replace('%','') for t in tmp[1:]]      # Remove % symbols from data text
+            lol.append(tmp)
+
+    index_name = lol[0][0] if index == 'default' else index
+
+    df = pd.DataFrame(lol[1:], columns =lol[0])
+    if index_name != None:
+        df.set_index(index_name, inplace=True)
+    return df
+
+
+## =================================================================== ##
+## PRINTING FUNCTIONS
+## =================================================================== ##
 def pprint_dict(adict, orderlist=[]):
     """Prints out a dictionary (eg stock quote) nicely in desired print orderlist."""
 
@@ -95,7 +191,22 @@ def pprint_dict(adict, orderlist=[]):
             continue
         if type(v) == dt.datetime: v = dt.datetime.ctime(v)
         print k.ljust(maxlen), ':', v 
-    
+
+
+## =================================================================== ##
+## OTHER UTILITIES
+## =================================================================== ##
+def isnumeric(a):
+    """Returns True if 'a' is an int, float, or a string that could be converted
+    to an int or float"""
+
+    if type(a) == int or type(a) == float: return True
+    elif type(a) == str:
+        if a.replace('.','').isdigit() and a.count('.') < 2: 
+            return True
+    elif np.dtype(a) == int or np.dtype(a) == float: return True
+    return False
+
 
 ## ------------------------------------------------------------------- ##
 def reorder_list(origlist, orderlist, qualifier='any'):
@@ -188,9 +299,8 @@ def filter_column(df, qr, col=None):
             qs = qr.split('|')
             qs = '(df.{} {}) | (df.{} {})'.format(col, qs[0], col, qs[1])
         else:
-            print 'how about here'
             qs = '(df.{} {})'.format(col, qr) 
-            print qs
+            print 'DEBUG', qs
     else:
         if col == 'index':
             qs = 'df.ix[{}]'.format(qr) 
@@ -223,10 +333,6 @@ def columnize(tbl, strip_header=True):
      default IF the header is included ie, strip_header=False. Some massaging needed then. 
      """
 
-    #for i in range(len(tbl[1:])):
-    #    for j in range(len(tbl[i])):
-    #        if tbl[i][j] == 'N/A': tbl[i][j] = np.NaN 
-
     if len(tbl)==0 or (len(tbl)==1 and strip_header): 
         logger.error('Empty table entered. No action taken') 
         return []
@@ -242,93 +348,8 @@ def columnize(tbl, strip_header=True):
     return [np.array(c, dtype=ntype) for c,ntype in zip(clist,row_types)] 
 
 
-## ------------------------------------------------------------------- ##
-
-
-
-def parse2df(fname):
-    '''Returns & generates a DataFrame from a file that has free from
-    spacing BUT has the header position specified with "|". Currently not
-    changeable but may be modified in the future. Helps deal with non-CSV
-    format but that has maligned tabs and spaces. '''
-
-    # NOTE. This is currently done in two passes to make use of exisiting 
-    # function txt2df & is a little slow, but ok for small files to parse
-
-    try:
-        fin = open (fname)
-    except:
-        print "Could not open {} for reading!".format(fname)
-
-    txtlist = fin.readlines()    # slurp whole thing
-    fin.close()
-  
-    sep_pragma = '#<pr:sep>'
-    txtlist = [t.replace(sep_pragma,' '*len(sep_pragma)) if t.lstrip().startswith(sep_pragma) else t 
-                for t in txtlist]
-    df = txt2df(''.join(txtlist), header_sep='|', header=True, skip_comment=True, index='default')
-    return df
-
-
-
 
 ## ------------------------------------------------------------------- ##
-
-def txt2df(strtxt, header_sep='|', header=True, skip_comment=True, index='default'):
-    '''Returns & generates a DataFrame from a string that has free form
-    spacing BUT has the header position specified with "|". Currently not
-    changeable but may be modified in the future. Helps deal with non-CSV
-    format but that has maligned tabs and spaces. 
-        strtxt:       blob of text that needs to be parsed 
-        header:       [True|False] - has a header or not 
-        header_sep:   character marking positions of string separation  
-        skip_comment: [True|False] - determine if comments are to be skipped
-                      over. Empty lines are always ignored. 
-                      currently only '#' is treated as comment 
-        index:        use 'default', None, or any other valid column 
-    '''
-
-    positions = []
-    lol = []
-
-    sep_found = False 
-
-    for line in strtxt.split('\n'):
-        if len(line.strip()) == 0:  # skip blank
-            continue
-        elif not sep_found and line.lstrip().startswith(header_sep): 
-            positions = [i for (i, c) in enumerate(line) if c == header_sep]
-            continue
-        elif (line.lstrip()).startswith('#'):   # skip comment 
-            continue
-
-        line = line.replace('\t', ' ')
-
-        if len(positions) == 0: # use split by space by default, basically csv type
-            lol.append( line.strip().split() )
-        else:
-            startpos = [0] + positions[:]
-            endpos = positions[:] + [len(line)]
-            # print 'S:', startpos  # DEBUG
-            # print 'E:', endpos 
-            tmp = [line[a:b].strip() for a,b in zip(startpos,endpos)]
-            tmp[1:] = [t.replace('%','') for t in tmp[1:]]      # Remove % symbols from data text
-            # print tmp 
-            lol.append(tmp)
-
-
-    index_name = lol[0][0] if index == 'default' else index
-
-    df = pd.DataFrame(lol[1:], columns =lol[0])
-    # df = df.convert_objects(convert_numeric=True)     # deprecated - rely on auto detection 
-
-    if index_name != None:
-        df.set_index(index_name, inplace=True)
-    return df
-
-
-## ------------------------------------------------------------------- ##
-
 def broadcast(alist, n, axis=1):
     """Broadcasts a list like object along columns (axis=1) or along rows (axis=0)
         alist: list like object, pandas pandas.Series, or numpy.array 
@@ -365,42 +386,10 @@ def broadcast(alist, n, axis=1):
         print 'Unrecognized list like object', type(alist) , 'entered' 
         return None
 
-## ------------------------------------------------------------------- ##
 
-def roundoff_df(df, places=0, columns=None, indices=None):
-    """Round off all entries in DataFrame. If no specific columns or
-    indices are provided all DataFrame elements are rounded. 
-    Returns a DataFrame with rounding applied
-
-    places : number of decimal places to round
-    columns: None or list of columns to apply rounding
-    indices: None or list of indices to apply rounding
-    """
-
-    tmp = df.copy()
-
-    if columns==None and indices==None: # round all
-        for j in tmp.columns: 
-            tmp[j] = tmp[j].round(places)
-    elif columns!=None and indices==None: # round specific columns 
-        for j in columns: 
-            tmp[j] = tmp[j].round(places)
-    elif columns==None and indices!=None: # round specific rows 
-        for i in indices: 
-            tmp.ix[i] = tmp.ix[i].round(places) 
-    else:                                  # specific rows & columns (slow at the moment)
-        for i in indices: 
-            tmp.ix[i, columns] = tmp.ix[i, columns].round(places) 
-
-    return tmp 
-
-
-
-## ------------------------------------------------------------------- ##
-
-
+## =================================================================== ##
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    df = parse2df('test_parse2df.txt')
+    df = parse2df('../testdir/test_parse2df.txt')
     print df
 

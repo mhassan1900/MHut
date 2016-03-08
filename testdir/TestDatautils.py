@@ -37,7 +37,7 @@ G_DF.drop('Name', inplace=True)
 G_DF.index.name = 'Name'
 G_DF.columns = G_dict['Name']
 G_DF = G_DF.reindex_axis(['my r2', 'my d2', 'other piper', 'solomon'])
-G_DF = G_DF.convert_objects(convert_numeric=True)
+for c in G_DF.columns: G_DF[c] = pd.to_numeric(G_DF[c])
 
 
 G1_dict = {    # I      II        III       IV        V 

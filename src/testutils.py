@@ -59,8 +59,6 @@ def run_tests(test_case):
     return summary, result
 
 
-
-
 # ------------------------------------------------------------ #
 def append_summary(master, summary):
     if not master:
