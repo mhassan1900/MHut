@@ -14,8 +14,9 @@ for p in sys.path: print " --> ", p
 
 import testutils
 from testdir.TestDatautils import TestDatautils
+from testdir.TestTimeutils import TestTimeutils
 
-test_suites = [TestDatautils]
+test_suites = [TestDatautils, TestTimeutils]
 grand_summary = {}
 
 
