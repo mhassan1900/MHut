@@ -25,7 +25,10 @@ uninstall:
 	pip uninstall $(project)
 
 distro:
-	@echo 'This is an option for the future. Not yet implemented'
+	@echo 'Preparing to upload to PyPi'
+	python setup.py register
+	python setup.py sdist
+	twine upload dist/*
 
 clean:
 	/bin/rm -rf build dist *egg-info */*egg-info *.log
