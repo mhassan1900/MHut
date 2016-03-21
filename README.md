@@ -1,4 +1,5 @@
-* DESCRIPTION *
+DESCRIPTION
+===========
 
 Various utilities I found useful that are needed on a regular basis.
 Not really meant to be specific to any project. Just stuff that comes up
@@ -34,7 +35,8 @@ NOTE. For the user directory, error messages may appear, but the 'egg' package w
 
 
 
-* RELEASE HISTORY *
+RELEASE HISTORY
+===============
 
 MHut-1.3.0   Mar 21, 2016   
 --------------------------
