@@ -9,6 +9,7 @@ Also the dumping ground for a bunch of various utils that don't fit
 anywhere.
 
 Offers following modules for import:
+
 *  mhut.msgutils  - Messaging & printing utils; very simple stuff and alternative to logging
 *  mhut.testutils - Testutils is needed for regression reporting. Convenient set of
                     functions for pretty reporting & such
