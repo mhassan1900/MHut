@@ -19,9 +19,12 @@ Following scripts will available after installation:
   pathutils       - This is a copy of pathutils.py and can be executed standalone
 
 
+
 * INSTALLATION *
 
+
 To install type:
+
 $ make install
 
 Run setup.py with appropriate modifications. By default, this is installed in the user's
@@ -30,6 +33,7 @@ site-package directory.
 The script "pathutils" is installed under Python2.7/bin directory.
 
 To uninstall, type:
+
 $ make uninstall
 
 NOTE. For the user directory, error messages may appear, but the 'egg' package will be gone.
