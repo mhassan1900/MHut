@@ -8,9 +8,9 @@ import sys, os
 from os.path import abspath, dirname
 from os.path import join as osjoin
 
-cdir = dirname(abspath(__file__))   # sys.argv[0])) = # testdir 
-pdir = dirname(cdir)                # 
-srcdir = osjoin(pdir, 'src')
+cdir = dirname(abspath(__file__))   # sys.argv[0])) = # testdir
+pdir = dirname(cdir)                #
+srcdir = osjoin(pdir, 'mhut')
 sys.path.insert(0, srcdir)
 
 pathlist = []
@@ -19,28 +19,28 @@ for p in sys.path:
 sys.path = pathlist
 
 from testutils import run_tests, twrap
-# -- Standard boilerplate header - end 
+# -- Standard boilerplate header - end
 import pandas as pd
 import numpy as np
-from datautils import * 
+from datautils import *
 
 
-# -- golden dataset -- 
+# -- golden dataset --
 G_dict = {
     'Name'        : ['A Cat', 'A Dog', 'Neither'],
     'my r2'       : [ 1,      0,        0],
     'my d2'       : [ 1,      0,        0],
     'other piper' : [ 0,      4,        0],
-    'solomon'     : [ 0,      0,        2]} 
+    'solomon'     : [ 0,      0,        2]}
 G_DF = pd.DataFrame.from_dict( G_dict, orient='index')
-G_DF.drop('Name', inplace=True) 
+G_DF.drop('Name', inplace=True)
 G_DF.index.name = 'Name'
 G_DF.columns = G_dict['Name']
 G_DF = G_DF.reindex_axis(['my r2', 'my d2', 'other piper', 'solomon'])
 for c in G_DF.columns: G_DF[c] = pd.to_numeric(G_DF[c])
 
 
-G1_dict = {    # I      II        III       IV        V 
+G1_dict = {    # I      II        III       IV        V
     'a': [2.071527, 1.998107, 2.029159, 1.192129, 1.459613],
     'b': [1.465882, 1.242207, 2.122667, 1.587954, 1.842492],
     'c': [1.505012, 1.674715, 1.436381, 1.626080, 1.435298],
@@ -49,22 +49,22 @@ G1_dict = {    # I      II        III       IV        V
 G1_DF = pd.DataFrame.from_dict(G1_dict, orient='index')
 G1_DF.columns = 'I II III IV V'.split()
 
-# -- convenience datasets for checking results -- 
-G1_dict_R0 = { 
+# -- convenience datasets for checking results --
+G1_dict_R0 = {
     'a': [2.0, 2.0, 2.0, 1.0, 1.0], 'b': [1.0, 1.0, 2.0, 2.0, 2.0],
     'c': [2.0, 2.0, 1.0, 2.0, 1.0], 'd': [2.0, 2.0, 2.0, 2.0, 2.0]
 }
 G1_DF_R0 = pd.DataFrame.from_dict(G1_dict_R0, orient='index')
-G1_DF_R0.columns = G1_DF.columns 
+G1_DF_R0.columns = G1_DF.columns
 
-G1_dict_R2 = { 
+G1_dict_R2 = {
     'a': [2.07, 2.00, 2.03, 1.19, 1.46],
     'b': [1.47, 1.24, 2.12, 1.59, 1.84],
     'c': [1.51, 1.67, 1.44, 1.63, 1.44],
     'd': [2.12, 2.01, 2.12, 1.80, 2.08]
 }
 G1_DF_R2 = pd.DataFrame.from_dict(G1_dict_R2, orient='index')
-G1_DF_R2.columns = G1_DF.columns 
+G1_DF_R2.columns = G1_DF.columns
 
 
 
@@ -75,14 +75,14 @@ class TestDatautils(ut.TestCase):
     # globally available data struct
     @classmethod
     def setUpClass(cls):
-        print "class setUp - Nothing to do" 
+        print "class setUp - Nothing to do"
 
     @classmethod
     def tearDownClass(cls):
-        print "class tearDown - Nothing to do" 
+        print "class tearDown - Nothing to do"
 
 
-    # applied per method in class 
+    # applied per method in class
     def setUp(self):
         pass
 
@@ -93,9 +93,9 @@ class TestDatautils(ut.TestCase):
     @twrap
     def test_filter_column(self):
         df  = pd.DataFrame(100*np.random.rand(12).reshape(4,3), columns=list('ABC'))
-        df1 = df.copy() 
-        df1.index  = [10, 10.25, 10.5, 10.75]  
-    
+        df1 = df.copy()
+        df1.index  = [10, 10.25, 10.5, 10.75]
+
         self.assertTrue(df.ix[1].equals(           filter_column(df, '1')))
         self.assertTrue(df.ix[1:3].equals(         filter_column(df, '1:3')))
         self.assertTrue(df.ix[:2].equals(          filter_column(df, ':2')))
@@ -103,7 +103,7 @@ class TestDatautils(ut.TestCase):
         self.assertTrue(df[df.index<2].equals(     filter_column(df, '<2')))
         self.assertTrue(df[df.index <= 1].equals(  filter_column(df, '<=1')))
         self.assertTrue(df[df.index != 1].equals(  filter_column(df, '!=1')))
-        self.assertTrue(df[(df.index > 1) & (df.index <= 2)].equals(   
+        self.assertTrue(df[(df.index > 1) & (df.index <= 2)].equals(
                             filter_column(df, '>1 & <=2')))
 
         self.assertTrue(df1.ix[10.5].equals(              filter_column(df1, '10.5')))
@@ -137,8 +137,8 @@ class TestDatautils(ut.TestCase):
 
         # TODO. N/A's are not handled gracefully
         #tbl[3][1] = 'N/A' # 2.3 -> 'N/A'
-        #result = vectorize(tbl) 
-        # self.assertEqual(xpct, result) 
+        #result = vectorize(tbl)
+        # self.assertEqual(xpct, result)
 
 
 
@@ -173,11 +173,11 @@ class TestDatautils(ut.TestCase):
     @twrap
     def test_roundoff_list(self):
         alist = [ 2.5768, 'bee', 256]
-        roundoff_list(alist, 3) 
+        roundoff_list(alist, 3)
         self.assertEqual([2.577, 'bee', 256.000], alist)
 
         alist = [ 2.5768, 'bee2', 256]
-        roundoff_list(alist) 
+        roundoff_list(alist)
         self.assertEqual([2.58, 'bee2', 256.00], alist)
 
 
@@ -239,8 +239,8 @@ class TestDatautils(ut.TestCase):
         self.assertEqual(1, c_ix-m_ix)
         self.assertEqual(set(orig_list), set(new_list))
 
-        des_order = 'banana apple cantaloupe something_else mango guava'.split() 
-        new_list = reorder_list(orig_list, des_order) 
+        des_order = 'banana apple cantaloupe something_else mango guava'.split()
+        new_list = reorder_list(orig_list, des_order)
         self.assertEqual(new_list, ['banana', 'apple', 'cantaloupe', 'mango', 'guava'])
 
     ## --------------------------------------------------------------------- ##
@@ -248,17 +248,17 @@ class TestDatautils(ut.TestCase):
     def test_df_reorder_columns(self):
         A,B,C,D,E = 0,1,2,3,4
         m = np.random.rand(30).reshape(6,5)
-        df = pd.DataFrame( m, columns=list('ABCDE') )   
+        df = pd.DataFrame( m, columns=list('ABCDE') )
 
-        df1 = df_reorder_columns(df, orderlist=list('CDAEB')) 
+        df1 = df_reorder_columns(df, orderlist=list('CDAEB'))
         m_xpdf = np.array(zip(m[:,C],m[:,D],m[:,A],m[:,E],m[:,B]))
         xpdf1 = pd.DataFrame( m_xpdf, columns=list('CDAEB') )
 
-        df2 = df_reorder_columns(df, list('BD'),'begin') 
+        df2 = df_reorder_columns(df, list('BD'),'begin')
         m_xpdf2 = np.array(zip(m[:,B],m[:,D],m[:,A],m[:,C],m[:,E]))
         xpdf2 = pd.DataFrame( m_xpdf2, columns=list('BDACE') )
 
-        df3 = df_reorder_columns(df, list('CFA'),'end') 
+        df3 = df_reorder_columns(df, list('CFA'),'end')
         m_xpdf3 = np.array(zip(m[:,B],m[:,D],m[:,E],m[:,C],m[:,A]))
         xpdf3 = pd.DataFrame( m_xpdf3, columns=list('BDECA') )
 
@@ -282,7 +282,7 @@ class TestDatautils(ut.TestCase):
 
         '''
         df = txt2df(alltxt)
-        for c in df.columns: df[c] = pd.to_numeric(df[c]) 
+        for c in df.columns: df[c] = pd.to_numeric(df[c])
         self.assertTrue(G_DF.equals(df))
 
 
@@ -290,7 +290,7 @@ class TestDatautils(ut.TestCase):
     @twrap
     def test_parse2df(self):
         df = parse2df(osjoin(cdir, 'test_parse2df.txt'))
-        for c in df.columns: df[c] = pd.to_numeric(df[c]) 
+        for c in df.columns: df[c] = pd.to_numeric(df[c])
         self.assertTrue(G_DF.equals(df))
 
 
@@ -300,20 +300,20 @@ class TestDatautils(ut.TestCase):
         alist = [1,2,3,4]
         aa = np.array(alist)
         ma = np.matrix(alist)
-        sa = pd.Series(alist) 
+        sa = pd.Series(alist)
 
         # -- check lists --
-        x = broadcast(alist, 3, 0) 
-        y = broadcast(alist, 3) 
+        x = broadcast(alist, 3, 0)
+        y = broadcast(alist, 3)
 
         xpct_x = [alist, alist, alist]
-        xpct_y = [[1,1,1], [2,2,2], [3,3,3], [4,4,4]] 
+        xpct_y = [[1,1,1], [2,2,2], [3,3,3], [4,4,4]]
         self.assertEqual( xpct_x, x)
         self.assertEqual( xpct_y, y)
 
         # -- check arrays  --
-        x = broadcast(aa, 3, 0) 
-        y = broadcast(aa, 3) 
+        x = broadcast(aa, 3, 0)
+        y = broadcast(aa, 3)
 
         xpct_x = np.array( [alist, alist, alist] )
         xpct_y = np.array( [[1,1,1], [2,2,2], [3,3,3], [4,4,4]] )
@@ -321,8 +321,8 @@ class TestDatautils(ut.TestCase):
         self.assertEqual( (xpct_y-y).sum(), 0)
 
         # -- check matrices  --
-        x = broadcast(ma, 3, 0) 
-        y = broadcast(ma, 3) 
+        x = broadcast(ma, 3, 0)
+        y = broadcast(ma, 3)
 
         xpct_x = np.matrix( [alist, alist, alist] )
         xpct_y = np.matrix( [[1,1,1], [2,2,2], [3,3,3], [4,4,4]] )
@@ -330,8 +330,8 @@ class TestDatautils(ut.TestCase):
         self.assertEqual( (xpct_y-y).sum(), 0)
 
         # -- check series  --
-        x = broadcast(sa, 3, 0) 
-        y = broadcast(sa, 3) 
+        x = broadcast(sa, 3, 0)
+        y = broadcast(sa, 3)
 
         xpct_x = pd.DataFrame( [alist, alist, alist], dtype=float )
         xpct_y = pd.DataFrame( [[1,1,1], [2,2,2], [3,3,3], [4,4,4]], dtype=float )
@@ -363,16 +363,15 @@ class TestDatautils(ut.TestCase):
         G1_rounded.ix['b'] = [1.47, 1.24, 2.12, 1.59, 1.84]
         G1_rounded.ix['d'] = [2.12, 2.01, 2.12, 1.80, 2.08]
         self.assertTrue(df.equals(G1_rounded))
-    
+
         df = roundoff_df(G1_DF, 2, columns=['III', 'V'], indices=['b', 'd'])
         G1_rounded = G1_DF.copy()
         G1_rounded.ix['b', ['III', 'V']] = [2.12, 1.84]
         G1_rounded.ix['d', ['III', 'V']] = [2.12, 2.08]
         self.assertTrue(df.equals(G1_rounded))
-        
+
 
 
 if __name__ == '__main__':
     # ut.main()
     run_tests(TestDatautils)
-
