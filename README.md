@@ -62,6 +62,7 @@ MHutils-1.1.0   Nov 24, 2014
 Added datautils for extra functionality to tackon on numpy & pandas.
 
 Offers following additional module for import:
+
 * datautils             
 
 
@@ -70,6 +71,7 @@ MHutils-1.1.0   Oct 23, 2014
 First release for multi-project use.
 
 Offers following modules for import:
+
 * msgutils  - Messaging & printing utils
 * testutils - Testutils is needed for regression reporting. Convenient set of
               functions for pretty reporting & such
