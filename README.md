@@ -20,8 +20,8 @@ Following scripts will available after installation:
 
 
 
-* INSTALLATION *
-
+*INSTALLATION*
+==============
 
 To install type:
 
