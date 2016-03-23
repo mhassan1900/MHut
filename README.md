@@ -66,7 +66,7 @@ Offers following additional module for import:
 * datautils             
 
 
-MHutils-1.1.0   Oct 23, 2014
+MHutils-1.0.0   Oct 23, 2014
 ----------------------------
 First release for multi-project use.
 

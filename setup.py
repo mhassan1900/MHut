@@ -8,9 +8,10 @@ from setuptools import setup, find_packages
 import mhut
 
 setup(
-    name = 'mhut',   # package name
-    author = 'Mahmud Hassan',
+    name = 'mhut',   
     version = mhut.__version__,
+    author = 'Mahmud Hassan',
+    author_email = 'mhassan1900@users.noreply.github.com',
     description='Various utilities by MH that show up often in his use',
     scripts = ['scripts/pathutils'],
     packages = find_packages(exclude=('testdir',)),

@@ -26,7 +26,7 @@ uninstall:
 
 distro:
 	@echo 'Preparing to upload to PyPi'
-	python setup.py register
+	# python setup.py register
 	python setup.py sdist
 	twine upload dist/*
 
