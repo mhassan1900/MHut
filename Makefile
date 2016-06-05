@@ -5,6 +5,7 @@
 # 	This should serve as a template. Copy this and modify as per project
 
 project=MHut
+save_lint=n
 
 all:
 	@echo 'Please enter a command for make:'
@@ -17,6 +18,9 @@ cover:
 	coverage run regress.py
 	coverage report --omit='/System/*','*/Library*','*testdir*'
 	coverage html --omit='/System/*','*/Library*','*testdir*'
+
+lint:
+	pylint --rcfile .pylintrc mhut -f colorized  --files-output=$(save_lint) 
 
 install:
 	python setup.py install --user
