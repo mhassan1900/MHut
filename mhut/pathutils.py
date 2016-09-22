@@ -4,24 +4,23 @@
    Usage  : path_utils.py <cmd> [args]
             where <cmd> is one of: 'add', 'remove', 'clean', or 'list'
             and [args] specify the paths, or optionally the
-            environment variable as follows: 
+            environment variable as follows:
 
-               path_utils.py add    [env var] <path 1> <path 2> ... <path N> 
-               path_utils.py remove [env var] <path 1> <path 2> ... <path N> 
-               path_utils.py clean  [env var] 
-               path_utils.py list   [env var] 
+               path_utils.py add    [env var] <path 1> <path 2> ... <path N>
+               path_utils.py remove [env var] <path 1> <path 2> ... <path N>
+               path_utils.py clean  [env var]
+               path_utils.py list   [env var]
 
             if 'env var' is not specified the commands apply to
             PATH by default. 'env var' may be upper case or lower case.
 
 """
 
+#pylint: disable=fixme
+#pylint: disable=bare-except
+
 import sys
 import os
-
-
-
-
 
 # **********************************************************
 # Begin class definition for Env
@@ -38,7 +37,7 @@ class Env:
         if self.val != None:
             self.path_list = self.val.split(':')
         else:
-            os.environ[name] = name  # create a new env variable 
+            os.environ[name] = name  # create a new env variable
             self.path_list = []
 
 
@@ -87,7 +86,7 @@ class Env:
         if path not in self.path_list:
             print "Not found in path list! ", path
         else:
-            print "Removing ", path, " from env var ", self.name 
+            print "Removing ", path, " from env var ", self.name
             while path in self.path_list:    # needed just in case path is not cleaned first
                 self.path_list.remove(path)
             self.pupdate()
@@ -108,7 +107,7 @@ class Env:
 
     def pwrite(self):
         """Writes out sanitized or new path list to file for sourcing"""
-        shell = os.getenv('SHELL') 
+        shell = os.getenv('SHELL')
         if shell == None:   # assume bash or ksh
             shell = 'bash'
         else:
@@ -147,7 +146,7 @@ def usage(s=None):
 
 
 
-#TODO: fix this so that errors in one or paths in list of paths is 
+#TODO: fix this so that errors in one or paths in list of paths is
 # handled more appropriately, eg, if only one non-existent path to
 # be added should not attempt to write to tmp file
 def execute(cmd, var, args):
@@ -174,7 +173,7 @@ def execute(cmd, var, args):
 def process_options(args):
     """Process options based on legal operations & subcommands
     Return sanitized cmds and arguments"""
-    subcmds = dict()   # each key(cmd) can take on a val of 0, or 1 
+    subcmds = dict()   # each key(cmd) can take on a val of 0, or 1
     subcmds_wo_arg = [ 'clean', 'list' ]
     subcmds_with_args = [ 'add', 'remove' ]
 
@@ -192,24 +191,24 @@ def process_options(args):
     def bad_args(cmd, argc):
         return True if argc < subcmds[cmd] else False
 
-    env_var = '' 
+    env_var = ''
     # determine what kind of cmd was given and arguments
     if cmd not in subcmds:
         usage("ERROR. Unrecognized cmd " + cmd + "! cmd must be from appropriate list")
     elif bad_args(cmd, argc):
         usage("Must enter at least one argument for " + cmd)
     elif argc > subcmds[cmd]:          # determine if it defaults to PATH or anything else
-       if os.getenv(args[0]) != None: 
-            env_var = args.pop(0)      
-       elif os.getenv(args[0].upper()) != None: 
-            env_var = args.pop(0).upper() 
-       else: # first argument is NOT a known env variable 
-          if (cmd == 'remove'): 
-             env_var = 'PATH' 
-          elif (cmd == 'add') and  ('/' not in args[0]) and (len(args) > 1):  # not like a path & has at least one other argument
-               env_var = args.pop(0)      # assume new env variable to be created 
-          else:
-               usage("Unrecognized environment variable " + args[0])
+        if os.getenv(args[0]) != None:
+            env_var = args.pop(0)
+        elif os.getenv(args[0].upper()) != None:
+            env_var = args.pop(0).upper()
+        else: # first argument is NOT a known env variable
+            if (cmd == 'remove'):
+                env_var = 'PATH'
+            elif (cmd == 'add') and  ('/' not in args[0]) and (len(args) > 1):  # not like a path & has at least one other argument
+                env_var = args.pop(0)      # assume new env variable to be created
+            else:
+                usage("Unrecognized environment variable " + args[0])
     else:
         env_var = 'PATH'
 
@@ -248,9 +247,7 @@ def main():
 
 
 if __name__ == '__main__':
-    if (len(sys.argv) > 1) and (sys.argv[1] == "test"):  
-       test()
+    if (len(sys.argv) > 1) and (sys.argv[1] == "test"):
+        test()
     else:
-       main()
-
-
+        main()

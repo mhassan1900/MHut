@@ -18,6 +18,9 @@ cover:
 	coverage report --omit='/System/*','*/Library*','*testdir*'
 	coverage html --omit='/System/*','*/Library*','*testdir*'
 
+lint:
+	pylint --rcfile=.pylintrc mhut -f colorized
+
 install:
 	python setup.py install --user
 

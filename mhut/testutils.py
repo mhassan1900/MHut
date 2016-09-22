@@ -15,9 +15,20 @@ def twrap(func):
         return func(*args)
     return inner
 
+# ------------------------------------------------------------ #
+def run_quick_tests(test_case, *test_names):
+    """test_case:  unittest.TestCase object that has been extended with tests
+       test_names: argument of test names (strings) of specific tests to run
+    """
+    suite = ut.TestSuite()
+    for t in test_names:
+        suite.addTest(test_case(t))
+    ut.TextTestRunner().run(suite)
 
 # ------------------------------------------------------------ #
 def run_tests(test_case):
+    """test_case: unittest.TestCase object that has been extended with tests
+    """
     loader = ut.TestLoader().loadTestsFromTestCase(test_case)
     result = ut.TestResult()
     loader(result)

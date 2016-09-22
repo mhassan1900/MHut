@@ -22,7 +22,7 @@ from testutils import run_tests
 # -- Standard boilerplate header - end
 
 
-from timeutils import format_date, parse_date , new_parse_date, iso_date
+from timeutils import format_date, parse_date , iso_date
 import datetime as dt
 
 '''Tests timeutils class'''
