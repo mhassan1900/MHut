@@ -11,6 +11,8 @@ curr_datetime to a different timezone such as UTC:
     >> curr_datetime.astimezone(pytz.timezone('UTC'))
 '''
 
+#pylint: disable=fixme
+#pylint: disable=bare-except
 
 import re
 import datetime as dt
@@ -60,7 +62,7 @@ def curr_time(loc=None):
     elif loc.lower() == 'central': curr = dt.datetime.now(timezone('US/Central'))
     elif loc.lower() == 'pacific': curr = dt.datetime.now(timezone('US/Pacific'))
     else:
-        logger.error('Unsupported location: {}'.format(loc))
+        logger.error('Unsupported location: %s', loc)
         return 'Sun 00:00:00'
 
     return curr.strftime('%a %H:%M:%S')
@@ -81,7 +83,7 @@ def curr_date(loc=None):
     elif loc.lower() == 'central': curr = dt.datetime.now(timezone('US/Central'))
     elif loc.lower() == 'pacific': curr = dt.datetime.now(timezone('US/Pacific'))
     else:
-        logger.error('Unsupported location: {}'.format(loc))
+        logger.error('Unsupported location: %s', loc)
         return (0,0,0,'Sunday')
 
     return curr.year, curr.month, curr.day, curr.strftime('%A')
@@ -102,8 +104,8 @@ def curr_dt(loc=None):
     elif loc.lower() == 'central': curr = dt.datetime.now(timezone('US/Central'))
     elif loc.lower() == 'pacific': curr = dt.datetime.now(timezone('US/Pacific'))
     else:
-        logger.error('Unsupported location: {}'.format(loc))
-        return dt.dateime(1900,1,1,tzinfo=timezone('UTC'))
+        logger.error('Unsupported location: %s', loc)
+        return dt.datetime(1900,1,1,tzinfo=timezone('UTC'))
 
     return curr
 
@@ -323,10 +325,9 @@ def iso_date(adate):
     if len(alist) != 3: return False
 
     y,m,d = alist
-    if y.isdigit() and len(y) == 4 and \
-       m.isdigit() and len(m) == 2 and \
-       d.isdigit() and len(d) == 2: return True
-    else: return False
+    return (y.isdigit() and len(y) == 4 and \
+            m.isdigit() and len(m) == 2 and \
+            d.isdigit() and len(d) == 2)
 
 
 def iso_date2(adate):
@@ -336,12 +337,11 @@ def iso_date2(adate):
     if len(alist) != 3: return  (0,0,0)
 
     y,m,d = alist
-    if y.isdigit() and len(y) == 4 and \
-       m.isdigit() and len(m) == 2 and \
-       d.isdigit() and len(d) == 2: return (int(y), int(m), int(d))
-    else: return (0,0,0)
-
-
+    return (int(y), int(m), int(d)) if ( \
+        y.isdigit() and len(y) == 4 and \
+        m.isdigit() and len(m) == 2 and \
+        d.isdigit() and len(d) == 2) \
+    else (0,0,0)
 
 
 #################################################################################
@@ -383,7 +383,7 @@ def iso_date2(adate):
 # *********************************************************
 # Main Routine (& test functions)
 # *********************************************************
-def test_timeutils(args):
+def test_timeutils(args): #pylint: disable=unused-argument
     print 'Curr time:' , curr_time()
     print 'Curr date:' , curr_date()
     print format_date( date(2013, 04, 12) )

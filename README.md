@@ -43,6 +43,12 @@ NOTE. For the user directory, error messages may appear, but the 'egg' package w
 RELEASE HISTORY
 ===============
 
+MHut-1.4.0   Sep 21, 2016   
+--------------------------
+- Added capability for selected tests using run_quick_tests() under testutils
+- Removed msgutils since it is mostly redundant; to be replaced by wrapper on 
+  logging module functions
+
 MHut-1.3.0   Mar 21, 2016   
 --------------------------
 - Renamed MHutils to MHut to avoid conflict w/existing package on PyPy
