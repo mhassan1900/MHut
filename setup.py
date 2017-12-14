@@ -15,5 +15,5 @@ setup(
     description='Various utilities by MH that show up often in his use',
     scripts = ['scripts/pathutils'],
     packages = find_packages(exclude=('testdir',)),
-    py_modules = ['testutils', 'timeutils', 'datautils', 'msgutils', 'pathutils']
+    py_modules = ['testutils', 'timeutils', 'datautils', 'profutils', 'pathutils']
 )
