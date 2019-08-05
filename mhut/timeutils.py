@@ -195,8 +195,8 @@ def parse_date( adate ):
             mth_str = mth_str[0:3].lower()
 
         try: month = _MTH_[mth_str]
-        except KeyError, e:
-            print "ERROR. Cannot find equivalent numeric for month", e
+        except KeyError:
+            print ("ERROR. Cannot find equivalent numeric for month", mth_str)
             month = date.today().month
 
         return int(month), int(day)
@@ -214,7 +214,7 @@ def parse_date( adate ):
         if len(x) == 8:
             fyear, fmonth, fday = int(x[0:4]), int(x[4:6]), int(x[6:8])
         else:
-            print "ERROR. unmatched date format; needs to be 8 chars if specified this way", x
+            print ("ERROR. unmatched date format; needs to be 8 chars if specified this way", x)
             return dflt_date
 
     else:           #* needs parsing
@@ -224,7 +224,7 @@ def parse_date( adate ):
             if '.' not in x and '-' not in x:
                 y = re.split('/', x)
             else:
-                print "ERROR. Cannot mix and match '/' with '.' , or '/' with '-'. "
+                print ("ERROR. Cannot mix and match '/' with '.' , or '/' with '-'. ")
                 return dflt_date
         else:
             slash_based = False
@@ -247,14 +247,14 @@ def parse_date( adate ):
                     fyear, fmonth, fday = int(y[0]), int(y[1]), 1 # eg, 2013-05
 
             elif len(y) < 2:
-                print "ERROR. Not enough information to construct date. Passing default"
+                print ("ERROR. Not enough information to construct date. Passing default")
                 return dflt_date
             else:
-                print "WARNING. Ignoring info beyond given year, month, day"
+                print ("WARNING. Ignoring info beyond given year, month, day")
 
         else:           #** sequence must be month, day, year
             if slash_based:
-                print 'ERROR. A "/" based date must consist ONLY of digits in month/day/year format'
+                print ('ERROR. A "/" based date must consist ONLY of digits in month/day/year format')
                 return dflt_date
             if len(y) == 3:  # eg, jan-14.2013  or may.25.15, etc
                 fyear = pad_year(y[2])
@@ -263,15 +263,15 @@ def parse_date( adate ):
                 fyear = pad_year(y[1])
                 fmonth, fday = get_md( y[0] )
             elif len(y) == 1:
-                print "ERROR. Not enough information to construct date. Passing default"
+                print ("ERROR. Not enough information to construct date. Passing default")
                 return dflt_date
             else:
-                print "WARNING. Ignoring info beyond given month, day, year"
+                print ("WARNING. Ignoring info beyond given month, day, year")
 
     # finally we got this far...
     try: date_obj = date(fyear, fmonth, fday)
-    except Exception, e:
-        print "ERROR. ", e
+    except Exception:
+        print ("ERROR. Cannot convert time tuple", fyear, fmonth, fday) 
         return dflt_date
 
     return date_obj
@@ -308,12 +308,12 @@ def exact_exp_date(results, exp):
         exp_dates.add(result[3])
 
     if len(exp_dates) == 0:
-        print "WARNING. No matching date found! Try again."
+        print ("WARNING. No matching date found! Try again.")
 
     if len(exp_dates) != 1:
-        print "WARNING. multiple dates found! "
-        for d in exp_dates: print "  ->   ", d
-        print "Try again with exact one."
+        print ("WARNING. multiple dates found! ")
+        for d in exp_dates: print ("  ->   ", d)
+        print ("Try again with exact one.")
     exp_date = ' '.join(list(exp_dates))
     return exp_date
 
@@ -384,26 +384,26 @@ def iso_date2(adate):
 # Main Routine (& test functions)
 # *********************************************************
 def test_timeutils(args): #pylint: disable=unused-argument
-    print 'Curr time:' , curr_time()
-    print 'Curr date:' , curr_date()
-    print format_date( date(2013, 04, 12) )
-    print format_date( date(2013, 04, 1) )
-    print "Market open  ? ", markets_open()
-    print "Market closed? ", markets_closed()
-    print 'GOOD DATES\n', "***********"
-    print 1, parse_date('jul23.14')
-    print 2, parse_date('20140918')
-    print 3, parse_date('2014-09-18')
-    print 4, parse_date('2014.9')
-    print 5, parse_date('jul9.2014')
-    print 6, parse_date('jul09.14')
-    print 7, parse_date('july-2014')
-    print 8, parse_date('july-14')
-    print 'BAD DATES\n', "***********"
-    print 1, parse_date('2014091')
-    print 2, parse_date('113-13-59')
-    print 3, parse_date('01131359')
-    print 4, parse_date('jux.14')
+    print ('Curr time:' , curr_time())
+    print ('Curr date:' , curr_date())
+    print (format_date( date(2013, 4, 12) ))
+    print (format_date( date(2013, 4, 1) ))
+    print ("Market open  ? ", markets_open())
+    print ("Market closed? ", markets_closed())
+    print ('GOOD DATES\n', "***********")
+    print (1, parse_date('jul23.14'))
+    print (2, parse_date('20140918'))
+    print (3, parse_date('2014-09-18'))
+    print (4, parse_date('2014.9'))
+    print (5, parse_date('jul9.2014'))
+    print (6, parse_date('jul09.14'))
+    print (7, parse_date('july-2014'))
+    print (8, parse_date('july-14'))
+    print ('BAD DATES\n', "***********")
+    print (1, parse_date('2014091'))
+    print (2, parse_date('113-13-59'))
+    print (3, parse_date('01131359'))
+    print (4, parse_date('jux.14'))
 
 
 if __name__ == '__main__':

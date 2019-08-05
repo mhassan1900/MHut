@@ -43,6 +43,11 @@ NOTE. For the user directory, error messages may appear, but the 'egg' package w
 RELEASE HISTORY
 ===============
 
+MHut-1.5.0   July 28, 2019   
+--------------------------
+- Ported to python3 (tested with version 3.7.x)
+- One test in TestDatautils failing (test_filter_column)
+
 MHut-1.4.0   Sep 21, 2016   
 --------------------------
 - Added capability for selected tests using run_quick_tests() under testutils

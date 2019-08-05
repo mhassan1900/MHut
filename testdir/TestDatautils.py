@@ -75,11 +75,11 @@ class TestDatautils(ut.TestCase):
     # globally available data struct
     @classmethod
     def setUpClass(cls):
-        print "class setUp - Nothing to do"
+        print("class setUp - Nothing to do")
 
     @classmethod
     def tearDownClass(cls):
-        print "class tearDown - Nothing to do"
+        print("class tearDown - Nothing to do")
 
 
     # applied per method in class
@@ -251,15 +251,15 @@ class TestDatautils(ut.TestCase):
         df = pd.DataFrame( m, columns=list('ABCDE') )
 
         df1 = df_reorder_columns(df, orderlist=list('CDAEB'))
-        m_xpdf = np.array(zip(m[:,C],m[:,D],m[:,A],m[:,E],m[:,B]))
+        m_xpdf = np.array(list(zip(m[:,C],m[:,D],m[:,A],m[:,E],m[:,B])))
         xpdf1 = pd.DataFrame( m_xpdf, columns=list('CDAEB') )
 
         df2 = df_reorder_columns(df, list('BD'),'begin')
-        m_xpdf2 = np.array(zip(m[:,B],m[:,D],m[:,A],m[:,C],m[:,E]))
+        m_xpdf2 = np.array(list(zip(m[:,B],m[:,D],m[:,A],m[:,C],m[:,E])))
         xpdf2 = pd.DataFrame( m_xpdf2, columns=list('BDACE') )
 
         df3 = df_reorder_columns(df, list('CFA'),'end')
-        m_xpdf3 = np.array(zip(m[:,B],m[:,D],m[:,E],m[:,C],m[:,A]))
+        m_xpdf3 = np.array(list(zip(m[:,B],m[:,D],m[:,E],m[:,C],m[:,A])))
         xpdf3 = pd.DataFrame( m_xpdf3, columns=list('BDECA') )
 
         self.assertTrue(df1.equals(xpdf1))
@@ -353,8 +353,8 @@ class TestDatautils(ut.TestCase):
         df = roundoff_df(G1_DF, 2, columns=['III', 'V'])
         G1_rounded = G1_DF.copy()
         G1_rounded.reindex_axis( list('abcd') )     # becomes acbd for some reason
-        G1_rounded['III'] =  pd.Series(dict(zip(list('abcd'), [2.03, 2.12, 1.44, 2.12] )))
-        G1_rounded['V']   =  pd.Series(dict(zip(list('abcd'), [1.46, 1.84, 1.44, 2.08] )))
+        G1_rounded['III'] =  pd.Series(dict(list(zip(list('abcd'), [2.03, 2.12, 1.44, 2.12] ))))
+        G1_rounded['V']   =  pd.Series(dict(list(zip(list('abcd'), [1.46, 1.84, 1.44, 2.08] ))))
         self.assertTrue(df.equals(G1_rounded))
 
 

@@ -30,7 +30,7 @@ import datetime as dt
 
 class TestTimeutils(ut.TestCase):
     def setUp(self):
-        self.date_obj = dt.date(2013, 05, 24)  # date_obj is a datetime.date object
+        self.date_obj = dt.date(2013, 5, 24)  # date_obj is a datetime.date object
         self.datestr = "2013-05-24"
 
     def tearDown(self):
@@ -44,7 +44,7 @@ class TestTimeutils(ut.TestCase):
 
     def test_format_date1(self):
         """Have only month and year"""
-        date_obj = dt.date(2013, 05, 1)  # date_obj is a datetime.date object
+        date_obj = dt.date(2013, 5, 1)  # date_obj is a datetime.date object
         self.assertEqual(format_date(date_obj), "2013-05")
 
 

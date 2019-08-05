@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 
 '''Tests utils module for ease of running & integrating test results.
    Execute this function instead of the standard ut.main(), eg:
@@ -11,7 +11,7 @@ import unittest as ut
 def twrap(func):
     """Decorator for test functions to print out what test is being run"""
     def inner(*args):
-        print "\n-- RUNNING TEST: <{}> --\n".format(func.__name__)
+        print("\n-- RUNNING TEST: <{}> --\n".format(func.__name__))
         return func(*args)
     return inner
 
@@ -32,21 +32,21 @@ def run_tests(test_case):
     loader = ut.TestLoader().loadTestsFromTestCase(test_case)
     result = ut.TestResult()
     loader(result)
-    print "=" * 60
-    print "TEST RESULTS FOR", test_case.__name__
+    print("=" * 60)
+    print("TEST RESULTS FOR", test_case.__name__)
 
-    print "*FAILURES*"
-    print "-" * 60
+    print("*FAILURES*")
+    print("-" * 60)
 
     for t, f in result.failures:
-        print "->", t, "<-"
-        print f
+        print("->", t, "<-")
+        print(f)
     for t, e in result.errors:
-        print "->", t, "<-"
-        print e
+        print("->", t, "<-")
+        print(e)
 
-    print "*ERRORS*"
-    print "-" * 60
+    print("*ERRORS*")
+    print("-" * 60)
 
     tcount = result.testsRun
     fcount = len(result.failures)
@@ -76,13 +76,13 @@ def append_summary(master, summary):
         master['Sublist'] = [summary.copy()]     # store list of all test summaries
         return master
 
-    for k in master.keys():
+    for k in list(master.keys()):
         if k == 'Sublist':
             master['Sublist'].append(summary.copy())
         else:
             master[k] += summary[k]
 
-    if not master.has_key('Sublist'):
+    if 'Sublist' not in master:
         master['Sublist'] = [summary.copy()]     # store list of all test summaries
 
     master['Pass rate'] = round( 100.0* master['Pass']/float(master['Total']), 2)
@@ -94,7 +94,7 @@ def append_summary(master, summary):
 # ------------------------------------------------------------ #
 def print_breakdown(slist):
     """Prints breakdown of other tests in slist in shortened form"""
-    print '   Name', ' '*20, 'Pass/Total  Fail Error PassRate '
+    print('   Name', ' '*20, 'Pass/Total  Fail Error PassRate ')
     for s in slist: # slist is list of dict()s
         n = s['Name']
         p = s['Pass']
@@ -104,41 +104,41 @@ def print_breakdown(slist):
         pr = str(s['Pass rate']) + '%'
 
         spc = ' '*(24 - len(n))
-        print '   %s %s    %03d/%03d   %03d   %03d   %s ' % (n, spc, p, t, f, e, pr)
+        print('   %s %s    %03d/%03d   %03d   %03d   %s ' % (n, spc, p, t, f, e, pr))
 
 
 # ------------------------------------------------------------ #
 def print_summary(summary, title=None):
-    print
+    print()
     if summary == {}:
-        print "   WARNING. No tests available for {}".format(title)
-        print "-" * 60
+        print("   WARNING. No tests available for {}".format(title))
+        print("-" * 60)
         return
 
     if title==None:
         title = "SUMMARY FOR '%s'" % (summary['Name'])
 
-    print "*%s*" % (title)
-    print "-" * 60
+    print("*%s*" % (title))
+    print("-" * 60)
 
 
-    if summary.has_key('Sublist'):
+    if 'Sublist' in summary:
         print_breakdown(summary['Sublist'])
 
-    print "-" * 60
-    print "    Name       :", summary['Name']
-    print "    Pass       :", summary['Pass']
-    print "    Failures   :", summary['Failures']
-    print "    Errors     :", summary['Errors']
-    print "    Total count:", summary['Total']
-    print "    Pass rate  :", str(summary['Pass rate']) + '%'
-    print "-" * 60
+    print("-" * 60)
+    print("    Name       :", summary['Name'])
+    print("    Pass       :", summary['Pass'])
+    print("    Failures   :", summary['Failures'])
+    print("    Errors     :", summary['Errors'])
+    print("    Total count:", summary['Total'])
+    print("    Pass rate  :", str(summary['Pass rate']) + '%')
+    print("-" * 60)
 
-    print
+    print()
     s = summary
     if summary['Pass'] == summary['Total']:
-        print "All tests ran without problems :)"
+        print("All tests ran without problems :)")
     else:
-        print s['Pass'], "out of", s['Total'], "tests ran without problems. There were", s['Errors']+s['Failures'], "fails or errors"
-    print
-    print "=" * 60
+        print(s['Pass'], "out of", s['Total'], "tests ran without problems. There were", s['Errors']+s['Failures'], "fails or errors")
+    print()
+    print("=" * 60)

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 '''
 Data structure utils module for generic use. Has functions
 that would be really nice to add to string, dictionary or
@@ -47,7 +47,7 @@ def roundoff_dict(adict, places=2):
     """Rounds off contents in a dictionary table to '2' places by default.
     Can handle one level deep of list of nums. Fails silently on non floats.
     NOTE. Dictionary is modified INPLACE"""
-    for k,v  in adict.items():
+    for k,v  in list(adict.items()):
         if type(v) == list: roundoff_list(v, places)
         else: adict[k] = RN(v, places)
     return
@@ -97,7 +97,7 @@ def parse2df(fname):
     try:
         fin = open (fname)
     except:
-        print "Could not open {} for reading!".format(fname)
+        print("Could not open {} for reading!".format(fname))
 
     txtlist = fin.readlines()    # slurp whole thing
     fin.close()
@@ -184,12 +184,12 @@ def pprint_dict(adict, orderlist=[]):
     for k in printsets:
         v = adict[k]
         if type(v) == pd.Series or type(v) == pd.DataFrame:
-            print '-' * 80
-            print v
-            print '-' * 80
+            print('-' * 80)
+            print(v)
+            print('-' * 80)
             continue
         if type(v) == dt.datetime: v = dt.datetime.ctime(v)
-        print k.ljust(maxlen), ':', v
+        print(k.ljust(maxlen), ':', v)
 
 
 ## =================================================================== ##
@@ -299,7 +299,7 @@ def filter_column(df, qr, col=None):
             qs = '(df.{} {}) | (df.{} {})'.format(col, qs[0], col, qs[1])
         else:
             qs = '(df.{} {})'.format(col, qr)
-            print 'DEBUG', qs
+            print('DEBUG', qs)
     else:
         if col == 'index':
             qs = 'df.ix[{}]'.format(qr)
@@ -382,7 +382,7 @@ def broadcast(alist, n, axis=1):
         else:           return pd.DataFrame( np.mat(aa).T*np.ones(n) )
 
     else:
-        print 'Unrecognized list like object', type(alist) , 'entered'
+        print('Unrecognized list like object', type(alist) , 'entered')
         return None
 
 
@@ -390,4 +390,4 @@ def broadcast(alist, n, axis=1):
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     df = parse2df('../testdir/test_parse2df.txt')
-    print df
+    print(df)

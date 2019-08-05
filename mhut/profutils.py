@@ -4,7 +4,7 @@ from line_profiler import LineProfiler
 # decorator version of profiler
 def std_profile(funcref):
     def inner(*args, **kwargs):
-        print 'INFO. profiling', funcref.__name__
+        print ('INFO. profiling', funcref.__name__)
         prof = cProfile.Profile()
         result = prof.runcall(funcref, *args, **kwargs)
         prof.print_stats()

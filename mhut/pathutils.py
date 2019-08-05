@@ -46,11 +46,11 @@ class Env:
         but could be at end (-1) or any other position"""
         path = os.path.normpath(path)           # remove double slashes and stuff
         if path in self.path_list:
-            print path, "already exists. Not appending to ", self.name
+            print(path, "already exists. Not appending to ", self.name)
         elif os.path.exists(path):
             self.path_list.insert(pos, path)
         else:
-            print path, "does not exist! Not appending to ", self.name
+            print(path, "does not exist! Not appending to ", self.name)
             return
         self.pupdate()
 
@@ -58,10 +58,10 @@ class Env:
     def plist(self):
         """Just lists out paths in env variable, one per line"""
         if self.val == None:
-            print "No such env variable ", self.val, " exists!"
+            print("No such env variable ", self.val, " exists!")
         else:
-            print "Listing for ", self.name
-            for p in self.path_list: print "  ", p
+            print("Listing for ", self.name)
+            for p in self.path_list: print("  ", p)
 
 
     def pclean(self):
@@ -69,9 +69,9 @@ class Env:
         path_list_pruned = []
         for p in self.path_list:
             if not os.path.exists(p):
-                print "Does not exist! ", p
+                print("Does not exist! ", p)
             elif p in path_list_pruned:
-                print "Duplicate found ", p
+                print("Duplicate found ", p)
             else:
                 p = os.path.normpath(p)       # remove double slashes and stuff
                 path_list_pruned.append(p)
@@ -84,9 +84,9 @@ class Env:
         """Removes all occurences of path from env variable"""
         path = os.path.normpath(path)       # remove double slashes and stuff
         if path not in self.path_list:
-            print "Not found in path list! ", path
+            print("Not found in path list! ", path)
         else:
-            print "Removing ", path, " from env var ", self.name
+            print("Removing ", path, " from env var ", self.name)
             while path in self.path_list:    # needed just in case path is not cleaned first
                 self.path_list.remove(path)
             self.pupdate()
@@ -97,7 +97,7 @@ class Env:
         try:
             tmp = self.path_list[0]
         except IndexError:
-            print "Empty value for env variable ", self.name
+            print("Empty value for env variable ", self.name)
             return
 
         for p in self.path_list[1:]:
@@ -117,7 +117,7 @@ class Env:
         try:
             fid = open(fname, 'w')
         except:
-            print "ERROR. Could not open ", fname, " for writing! Exiting..."
+            print("ERROR. Could not open ", fname, " for writing! Exiting...")
             exit(1)
 
         if self.val == None:
@@ -130,7 +130,7 @@ class Env:
 
         fid.write(wstr)
         fid.close()
-        print "Source ", fname, " for new path to take effect"
+        print("Source ", fname, " for new path to take effect")
 
 # **********************************************************
 # End of class definition for Env
@@ -140,8 +140,8 @@ class Env:
 
 def usage(s=None):
     if s != None:
-        print s
-    print __doc__
+        print(s)
+    print(__doc__)
     exit()
 
 
@@ -235,7 +235,7 @@ def test():
     cmd = 'env_list CADENCE_PATH'
     cmd = 'ld_remove /cad/tools/cliosoft/sos_5.31_linux/lib    /cad/tools/cadence/soc/SOC71/tools/lib'
     (cmd, var, args) = process_options(cmd.split())
-    print "Executing: ", cmd, var, args
+    print("Executing: ", cmd, var, args)
     execute (cmd, var, args)
 
 

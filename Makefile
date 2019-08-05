@@ -12,7 +12,7 @@ all:
 	@echo '	  test|install|uninstall|cover|distro|clean'
 
 test: clean
-	python regress.py | tee 2>&1 regress.log
+	python3 regress.py | tee 2>&1 regress.log
 
 cover:
 	coverage run regress.py
@@ -23,7 +23,7 @@ lint:
 	pylint --rcfile .pylintrc mhut -f colorized  --files-output=$(save_lint) 
 
 install:
-	python setup.py install --user
+	python3 setup.py install --user
 
 uninstall:
 	pip uninstall $(project)
@@ -31,7 +31,7 @@ uninstall:
 distro:
 	@echo 'Preparing to upload to PyPi'
 	# python setup.py register
-	python setup.py sdist
+	python3 setup.py sdist
 	twine upload dist/*
 
 clean:

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 #import unittest as ut
 import sys
@@ -14,9 +14,9 @@ for ts in test_suites:
     tsummary, dummy = testutils.run_tests(ts)
     grand_summary = testutils.append_summary(grand_summary, tsummary)
 
-print "#" * 80
-print "# REGRESSION RESULTS UNDER 'project #".format(project)
-print "#" * 80
+print ("#" * 80)
+print ("# REGRESSION RESULTS UNDER 'project #".format(project))
+print ("#" * 80)
 
 testutils.print_summary(grand_summary, "GRAND SUMMARY")
-print "#" * 80
+print ("#" * 80)
