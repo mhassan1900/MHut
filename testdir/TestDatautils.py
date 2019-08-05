@@ -36,7 +36,7 @@ G_DF = pd.DataFrame.from_dict( G_dict, orient='index')
 G_DF.drop('Name', inplace=True)
 G_DF.index.name = 'Name'
 G_DF.columns = G_dict['Name']
-G_DF = G_DF.reindex_axis(['my r2', 'my d2', 'other piper', 'solomon'])
+G_DF = G_DF.reindex(['my r2', 'my d2', 'other piper', 'solomon'])
 for c in G_DF.columns: G_DF[c] = pd.to_numeric(G_DF[c])
 
 
@@ -96,28 +96,28 @@ class TestDatautils(ut.TestCase):
         df1 = df.copy()
         df1.index  = [10, 10.25, 10.5, 10.75]
 
-        self.assertTrue(df.ix[1].equals(           filter_column(df, '1')))
-        self.assertTrue(df.ix[1:3].equals(         filter_column(df, '1:3')))
-        self.assertTrue(df.ix[:2].equals(          filter_column(df, ':2')))
-        self.assertTrue(df.ix[2:].equals(          filter_column(df, '2:')))
-        self.assertTrue(df[df.index<2].equals(     filter_column(df, '<2')))
-        self.assertTrue(df[df.index <= 1].equals(  filter_column(df, '<=1')))
-        self.assertTrue(df[df.index != 1].equals(  filter_column(df, '!=1')))
+        self.assertTrue(df.iloc[1].equals           (filter_column(df, '1')))
+        self.assertTrue(df.iloc[1:4].equals         (filter_column(df, '1:3')))
+        self.assertTrue(df.iloc[:3].equals          (filter_column(df, ':2')))
+        self.assertTrue(df.iloc[2:].equals          (filter_column(df, '2:')))
+        self.assertTrue(df[df.index<2].equals       (filter_column(df, '<2')))
+        self.assertTrue(df[df.index <= 1].equals    (filter_column(df, '<=1')))
+        self.assertTrue(df[df.index != 1].equals    (filter_column(df, '!=1')))
         self.assertTrue(df[(df.index > 1) & (df.index <= 2)].equals(
                             filter_column(df, '>1 & <=2')))
 
-        self.assertTrue(df1.ix[10.5].equals(              filter_column(df1, '10.5')))
-        self.assertTrue(df1.ix[10.25:10.5].equals(        filter_column(df1, '10.25:10.5')))
-        self.assertTrue(df1.ix[:10.5].equals(             filter_column(df1, ':10.5')))
-        self.assertTrue(df1.ix[10.5:].equals(             filter_column(df1, '10.5:')))
-        self.assertTrue(df1[df1.index >= 10.5].equals(    filter_column(df1, '>=10.5')))
-        self.assertTrue(df1[df1.index == 10.25].equals(   filter_column(df1, '==10.25')))
+        self.assertTrue(df1.loc[10.5].equals           (filter_column(df1, '10.5')))
+        self.assertTrue(df1.loc[10.25:10.5].equals     (filter_column(df1, '10.25:10.5')))
+        self.assertTrue(df1.loc[:10.5].equals          (filter_column(df1, ':10.5')))
+        self.assertTrue(df1.loc[10.5:].equals          (filter_column(df1, '10.5:')))
+        self.assertTrue(df1[df1.index >= 10.5].equals   (filter_column(df1, '>=10.5')))
+        self.assertTrue(df1[df1.index == 10.25].equals  (filter_column(df1, '==10.25')))
         self.assertTrue(df1[(df1.index < 10.25) | (df1.index >= 10.75)].equals(
                  filter_column(df1, '<10.25 | >=10.75')))
 
-        # expect errors
-        self.assertTrue(len(filter_column(df, '1.0'))==0) # ERROR (returns empty table)
-        self.assertTrue(len(filter_column(df1, '1'))==0)  # ERROR (returns empty table)
+        # expect errors in some version of pandas
+        self.assertTrue(df.iloc[1].equals           (filter_column(df, '1.0')))
+        # self.assertTrue(filter_column(df, '1.0') - df.iloc[1]) # 1.0 => 1 (returns non-empty table)
 
 
     ## --------------------------------------------------------------------- ##
@@ -352,7 +352,7 @@ class TestDatautils(ut.TestCase):
 
         df = roundoff_df(G1_DF, 2, columns=['III', 'V'])
         G1_rounded = G1_DF.copy()
-        G1_rounded.reindex_axis( list('abcd') )     # becomes acbd for some reason
+        G1_rounded.reindex( list('abcd') )     # becomes acbd for some reason
         G1_rounded['III'] =  pd.Series(dict(list(zip(list('abcd'), [2.03, 2.12, 1.44, 2.12] ))))
         G1_rounded['V']   =  pd.Series(dict(list(zip(list('abcd'), [1.46, 1.84, 1.44, 2.08] ))))
         self.assertTrue(df.equals(G1_rounded))
@@ -360,14 +360,14 @@ class TestDatautils(ut.TestCase):
 
         df = roundoff_df(G1_DF, 2, indices=['b', 'd'])
         G1_rounded = G1_DF.copy()
-        G1_rounded.ix['b'] = [1.47, 1.24, 2.12, 1.59, 1.84]
-        G1_rounded.ix['d'] = [2.12, 2.01, 2.12, 1.80, 2.08]
+        G1_rounded.loc['b'] = [1.47, 1.24, 2.12, 1.59, 1.84]
+        G1_rounded.loc['d'] = [2.12, 2.01, 2.12, 1.80, 2.08]
         self.assertTrue(df.equals(G1_rounded))
 
         df = roundoff_df(G1_DF, 2, columns=['III', 'V'], indices=['b', 'd'])
         G1_rounded = G1_DF.copy()
-        G1_rounded.ix['b', ['III', 'V']] = [2.12, 1.84]
-        G1_rounded.ix['d', ['III', 'V']] = [2.12, 2.08]
+        G1_rounded.loc['b', ['III', 'V']] = [2.12, 1.84]
+        G1_rounded.loc['d', ['III', 'V']] = [2.12, 2.08]
         self.assertTrue(df.equals(G1_rounded))
 
 

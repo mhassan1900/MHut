@@ -270,7 +270,7 @@ def df_reorder_columns(df, orderlist=[], qualifier='any'):
     """
 
     keylist = reorder_list(list(df.columns), orderlist, qualifier)
-    return df.reindex_axis(keylist, axis=1)
+    return df.reindex(keylist, axis=1)
 
 
 # --------------------------------------------------------------- #

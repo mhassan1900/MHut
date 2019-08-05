@@ -43,7 +43,12 @@ NOTE. For the user directory, error messages may appear, but the 'egg' package w
 RELEASE HISTORY
 ===============
 
-MHut-1.5.0   July 28, 2019   
+MHut-1.6.1   Aug 5, 2019   
+--------------------------
+- Fixed pandas version related bug
+- Tested w/python2.7 as well
+
+MHut-1.6.0   July 28, 2019   
 --------------------------
 - Ported to python3 (tested with version 3.7.x)
 - One test in TestDatautils failing (test_filter_column)
