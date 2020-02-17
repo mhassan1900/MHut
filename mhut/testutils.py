@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+ 
 '''Tests utils module for ease of running & integrating test results.
    Execute this function instead of the standard ut.main(), eg:
         run_tests(TestTimeutils)

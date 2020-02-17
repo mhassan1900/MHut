@@ -1,7 +1,7 @@
 #!/usr/bin/env python2.7
 # Exectute this file with -v @ the end. Cannot use ipython
 
-
+from __future__ import print_function
 
 # -- Standard boilerplate header - begin
 import unittest as ut

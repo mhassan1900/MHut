@@ -1,4 +1,4 @@
-#!/usr/bin/env ipython
+#!/usr/bin/env python2
 
 '''
 This file has date & time utilities, especially in the context of quotes.
@@ -14,6 +14,8 @@ curr_datetime to a different timezone such as UTC:
 #pylint: disable=fixme
 #pylint: disable=bare-except
 
+from __future__ import print_function
+ 
 import re
 import datetime as dt
 from datetime import date, timedelta
@@ -184,8 +186,7 @@ def parse_date( adate ):
     d = date.today()
     dflt_date = date(d.year, d.month, 1)   # pick 1st of month by default
 
-    #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    def get_md(monthday):   # return month, day tuple from a string
+    def _get_md(monthday):   # return month, day tuple from a string
         if monthday.isalpha():  # we have month only
             day = 1
             mth_str = monthday[0:3].lower()
@@ -201,12 +202,12 @@ def parse_date( adate ):
 
         return int(month), int(day)
 
-    def pad_year(yr):
+    def _pad_year(yr):
         if   len(yr) == 1: return 2000 + int(yr) #    4 => 2004
         elif len(yr) == 2: return 2000 + int(yr) #   13 => 2013 scope for confusion 1913 or 2013?
         elif len(yr) == 3: return 2000 + int(yr) #  137 => 0    this is an error
         else:              return int(yr)        # 1995         cleanest
-    #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    
 
     x = str(adate).lower().strip()
 
@@ -237,12 +238,12 @@ def parse_date( adate ):
         if all_digits:  #** sequence must be year, month, day
             if len(y) == 3:
                 if slash_based:
-                    fyear, fmonth, fday = int(pad_year(y[2])), int(y[0]), int(y[1]) # eg, 5/18/13
+                    fyear, fmonth, fday = int(_pad_year(y[2])), int(y[0]), int(y[1]) # eg, 5/18/13
                 else:
                     fyear, fmonth, fday = int(y[0]), int(y[1]), int(y[2]) # eg, 2013-05-18
             elif len(y) == 2:
                 if slash_based:
-                    fyear, fmonth, fday = int(pad_year(y[1])), int(y[0]), 1 # eg, 5/13
+                    fyear, fmonth, fday = int(_pad_year(y[1])), int(y[0]), 1 # eg, 5/13
                 else:
                     fyear, fmonth, fday = int(y[0]), int(y[1]), 1 # eg, 2013-05
 
@@ -257,11 +258,11 @@ def parse_date( adate ):
                 print ('ERROR. A "/" based date must consist ONLY of digits in month/day/year format')
                 return dflt_date
             if len(y) == 3:  # eg, jan-14.2013  or may.25.15, etc
-                fyear = pad_year(y[2])
-                fmonth, fday = get_md( y[0]+y[1] )
+                fyear = _pad_year(y[2])
+                fmonth, fday = _get_md( y[0]+y[1] )
             elif len(y) == 2:  # eg, jan.14 or jan3-14
-                fyear = pad_year(y[1])
-                fmonth, fday = get_md( y[0] )
+                fyear = _pad_year(y[1])
+                fmonth, fday = _get_md( y[0] )
             elif len(y) == 1:
                 print ("ERROR. Not enough information to construct date. Passing default")
                 return dflt_date
@@ -282,20 +283,17 @@ def markets_open():
     """Return True if markets are open. Uses the NYC/Eastern time to figure this out"""
 
     wallst_time = dt.datetime.now(timezone('US/Eastern'))
-    chour  =  wallst_time.hour
-    cminute =  wallst_time.minute
-    cweekday =  wallst_time.weekday()
-    chour_frac  =  chour + cminute/60.0
+    chour = wallst_time.hour
+    cminute = wallst_time.minute
+    cweekday = wallst_time.weekday()
+    chour_frac = chour + cminute/60.0
 
     closed = (cweekday in (5,6)) or (chour_frac < 6.5) or (chour > 13)
-    return False if closed else True
+    return not closed 
 
 
-
-def markets_closed():
-    """Return True if markets are closed"""
-    return not markets_open()
-
+# True if markets not open 
+markets_closed = lambda: not markets_open()
 
 
 def exact_exp_date(results, exp):
