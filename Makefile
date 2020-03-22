@@ -23,7 +23,7 @@ lint:
 	pylint --rcfile .pylintrc mhut -f colorized  --files-output=$(save_lint) 
 
 install:
-	python3 setup.py install --user
+	python3 setup.py install 
 
 uninstall:
 	pip uninstall $(project)
