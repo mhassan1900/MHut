@@ -16,8 +16,6 @@
 
 """
 
-from __future__ import print_function
-
 #pylint: disable=fixme
 #pylint: disable=bare-except
 

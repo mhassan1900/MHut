@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 # Run as:
 # python setup.py install --user    [--user needed if no root permissions]
 

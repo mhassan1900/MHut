@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 '''
 This file has date & time utilities, especially in the context of quotes.
@@ -14,8 +14,6 @@ curr_datetime to a different timezone such as UTC:
 #pylint: disable=fixme
 #pylint: disable=bare-except
 
-from __future__ import print_function
- 
 import re
 import datetime as dt
 from datetime import date, timedelta
