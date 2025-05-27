@@ -6,8 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "mhut"
 version = "1.6.4"
 readme = "README.md"
-license-files = ["LICENSE"]
-# python_requires = ">=3.7"
+license = "MIT"
 dependencies = ['numpy', 'pandas', 'pytz']
 authors = [ 
     {name = "Mahmud Hassan"},
