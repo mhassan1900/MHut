@@ -74,10 +74,10 @@ def roundoff_df(df, places=0, columns=None, indices=None):
             tmp[j] = tmp[j].round(places)
     elif columns==None and indices!=None: # round specific rows
         for i in indices:
-            tmp.ix[i] = tmp.ix[i].round(places)
+            tmp.loc[i] = tmp.loc[i].round(places)
     else:                                  # specific rows & columns (slow at the moment)
         for i in indices:
-            tmp.ix[i, columns] = tmp.ix[i, columns].round(places)
+            tmp.loc[i, columns] = tmp.loc[i, columns].round(places)
 
     return tmp
 
@@ -302,7 +302,7 @@ def filter_column(df, qr, col=None):
             print('DEBUG', qs)
     else:
         if col == 'index':
-            qs = 'df.ix[{}]'.format(qr)
+            qs = 'df.loc[{}]'.format(qr)
         else:
             logger.error("Could not process evaluation of '{}. Returning empty DF'".format(qs))
             return pd.DataFrame( {} )
@@ -370,16 +370,16 @@ def broadcast(alist, n, axis=1):
         else:           return (np.array([alist]).T*np.ones(n)).tolist() #pylint: disable=no-member
 
     elif type(aa)==np.ndarray:
-        if axis==0:     return np.array( np.mat(np.ones(n)).T*aa )
+        if axis==0:     return np.array( np.matrix(np.ones(n)).T*aa )
         else:           return np.array([aa]).T*np.ones(n) #pylint: disable=no-member
 
     elif type(ma)==np.matrix:
-        if axis==0:     return np.mat(np.ones(n)).T*alist
+        if axis==0:     return np.matrix(np.ones(n)).T*alist
         else:           return alist.T*np.ones(n)
 
     elif type(sa)==pd.Series:
-        if axis==0:     return pd.DataFrame( np.mat(np.ones(n)).T*np.mat(sa) )
-        else:           return pd.DataFrame( np.mat(aa).T*np.ones(n) )
+        if axis==0:     return pd.DataFrame( np.matrix(np.ones(n)).T*np.matrix(sa) )
+        else:           return pd.DataFrame( np.matrix(aa).T*np.ones(n) )
 
     else:
         print('Unrecognized list like object', type(alist) , 'entered')

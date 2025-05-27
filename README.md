@@ -1,12 +1,9 @@
 DESCRIPTION
 ===========
 
-Various utilities I found useful that are needed on a regular basis.
-Not really meant to be specific to any project. Just stuff that comes up
-on a regular basis.
+Various utilities I found useful for projects that are needed on a regular basis.
 
-Also the dumping ground for a bunch of various utils that don't fit
-anywhere.
+Also the dumping ground for a bunch of various utils that don't fit anywhere.
 
 Offers following modules for import:
 
@@ -30,7 +27,7 @@ $ make install
 Run setup.py with appropriate modifications. By default, this is installed in the user's
 site-package directory.
 
-The script "pathutils" is installed under Python2.7/bin directory.
+The script "pathutils" is installed under <python install or virtual env>/.../bin directory.
 
 To uninstall, type:
 
@@ -42,6 +39,16 @@ NOTE. For the user directory, error messages may appear, but the 'egg' package w
 
 RELEASE HISTORY
 ===============
+MHut-1.6.4   May 27, 2025 
+--------------------------
+- Fixes to obsolete method calls in Pandas; Install related fixes
+- Tested with Python3.12
+
+
+MHut-1.6.3   Mar 16, 2022 
+--------------------------
+- Works only w/python3.7.x or newer; removed python2 support 
+- Install related fixes
 
 MHut-1.6.1   Aug 5, 2019   
 --------------------------

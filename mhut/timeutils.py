@@ -340,41 +340,6 @@ def iso_date2(adate):
     else (0,0,0)
 
 
-#################################################################################
-# Old functions kept for reference - TEMPORARILY
-#################################################################################
-# def curr_date_old():    #TODO. make this obsolete
-#     curr   = t.localtime(t.time())
-#     wday   = _DAY_[curr.tm_wday] # week day
-#     day    = curr.tm_mday         # day of month
-#     year   = int(curr.tm_year)
-#     month  = curr.tm_mon
-#     print "types", type(year), type(month), type(day), type(wday)  # 2013, 04, 12, friday
-#     return year, month, day, wday  # 2013, 04, 12, friday
-#
-#
-# def markets_open_old():
-#     """Return True if markets are open. Uses naive time"""
-#
-#     curr = t.localtime(t.time())
-#     curr_hour = float(curr.tm_hour) + float(curr.tm_min)/60.0
-#     time_str = str(curr.tm_hour) + ':' + str(curr.tm_min) + ':' + str(curr.tm_sec)
-#     ## # print 'current weekday and time', _DAY_[curr.tm_wday], time_str    # DEBUG
-#
-#     # After 1 pm or before 6:30 am, markets are closed
-#     closed = curr_hour > 13.0 or curr_hour < 6.5 or \
-#         _DAY_[curr.tm_wday] == 'Saturday' or _DAY_[curr.tm_wday] == 'Sunday'
-#
-#     return False if closed else True
-#
-#
-# def new_parse_date( adate ):    # TODO. Is this better than the existing one?
-#     # return du.parser.parse(adate)
-#     # print '-- adate = ', adate, '--'  // has bugs, eg, may23.12 becomes 05/23/2014
-#     return dp.parse(adate).date()
-
-
-
 
 # *********************************************************
 # Main Routine (& test functions)
