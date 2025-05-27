@@ -25,10 +25,10 @@ setup(
     description='Various utilities by MH that show up often in project use',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/mhassan1900/mhut",
-    project_urls={
-        "Bug Tracker": "https://github.com/mhassan1900/mhut/issues",
-    },
+    # url="https://github.com/mhassan1900/mhut",
+    # project_urls={
+    #     "Bug Tracker": "https://github.com/mhassan1900/mhut/issues",
+    # },
     scripts = ['scripts/pathutils'],
     #classifiers=[
     #    "Programming Language :: Python :: 3",
@@ -38,8 +38,9 @@ setup(
     # package_dir={"": "src"},
     # packages=find_packages(where="src"),
     packages = find_packages(exclude=('testdir',)),
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     py_modules = ['testutils', 'timeutils', 'datautils', 'profutils', 'pathutils'],
+    install_requires = ['numpy', 'pandas', 'pytz'],
 )
 
 
