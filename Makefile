@@ -20,7 +20,8 @@ cover:
 	coverage html --omit='/System/*','*/Library*','*testdir*'
 
 lint:
-	pylint --rcfile .pylintrc mhut -f colorized  --files-output=$(save_lint) 
+	# pylint --rcfile .pylintrc mhut -f colorized  --files-output=$(save_lint) 
+	pylint --rcfile .pylintrc mhut -f colorized  
 
 install:
 	python3 setup.py install 
